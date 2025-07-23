@@ -1,0 +1,36 @@
+{
+  "name": "sc30gsw",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "build:clean": "rm -rf .next dist && bun run build",
+    "preview": "vite preview",
+    "lint": "bunx biome lint --write",
+    "format": "bunx biome format --write",
+    "check": "bunx biome check --write"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.1.1",
+    "@tabler/icons": "^3.34.1",
+    "@tailwindcss/vite": "^4.1.11",
+    "nuqs": "^2.4.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-hook-form": "^7.60.0",
+    "tailwindcss": "^4.1.11",
+    "zod": "^4.0.5"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.1.2",
+    "@playwright/test": "^1.54.1",
+    "@types/node": "^24.1.0",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^4.6.0",
+    "typescript": "~5.8.3",
+    "vite": "^7.0.4"
+  }
+}
