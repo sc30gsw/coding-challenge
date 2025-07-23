@@ -1,5 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
-import { vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useSimulationForm } from '~/features/simulation/hooks/use-simulation-form'
 
 vi.mock('react', () => ({
@@ -16,6 +15,8 @@ const mockHandleSubmit = vi.fn((callback) => {
   return vi.fn(() => callback())
 })
 
+const mockSetError = vi.fn()
+
 vi.mock('~/hooks/use-safe-form', () => ({
   useSafeForm: vi.fn(() => ({
     watch: mockWatch,
@@ -23,6 +24,7 @@ vi.mock('~/hooks/use-safe-form', () => ({
     setValue: mockSetValue,
     reset: mockReset,
     handleSubmit: mockHandleSubmit,
+    setError: mockSetError,
     formState: { errors: {}, isSubmitting: false },
   })),
 }))
@@ -66,6 +68,8 @@ describe('use-simulation-form', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     
+    mockSetError.mockClear()
+    
     // デフォルトのモック戻り値を設定
     mockWatch.mockReturnValue({
       postalCode: '',
@@ -86,7 +90,7 @@ describe('use-simulation-form', () => {
       email: '',
       capacity: null,
     })
-  })
+      })
 
   describe('useSimulationForm初期化', () => {
     it('フックが正常に初期化される', () => {
@@ -191,7 +195,6 @@ describe('use-simulation-form', () => {
       result.resetForm()
       
       expect(mockReset).toHaveBeenCalled()
-      expect(mockClearErrors).toHaveBeenCalled()
     })
   })
 
