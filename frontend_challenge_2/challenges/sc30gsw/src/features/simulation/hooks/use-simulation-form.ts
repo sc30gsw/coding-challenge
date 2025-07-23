@@ -210,21 +210,6 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
     submitHandler()
   }, [form, onSubmit])
 
-  // フィールド変更時の自動処理
-  // useEffect(() => {
-  //   const subscription = form.watch((data, { name }) => {
-  //     if (name === "postalCode" && data.postalCode) {
-  //       handlePostalCodeChange(data.postalCode)
-  //     } else if (name === "company" && data.company) {
-  //       handleCompanyChange(data.company)
-  //     } else if (name === "plan" && data.plan) {
-  //       handlePlanChange(data.plan)
-  //     }
-  //   })
-
-  //   return subscription.unsubscribe
-  // }, [form, handlePostalCodeChange, handleCompanyChange, handlePlanChange])
-
   return {
     form,
     formData,
