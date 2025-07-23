@@ -82,7 +82,8 @@ bun run preview
 |   │        |     └── *.spec.ts     # カスタムhooks単体テストファイル
 |   │        └── utils               # utility単体テストディレクトリ
 |   │              └── *.spec.ts     # utility単体テストファイル
-│   └── *.spec.ts                    # 各画面のE2Eテストコード
+│   └── e2e/                         # E2Eテストディレクトリ
+│       └── *.spec.ts                # 各画面のE2Eテストコード
 ├── .env.example                     # 環境変数テンプレート
 ├── biome.json                       # リンター/フォーマッター設定ファイル
 ├── package.json                     # パッケージマネージャー設定ファイル

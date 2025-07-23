@@ -21,8 +21,7 @@ export default defineConfig({
       'tests/unit/**/*.spec.ts'
     ],
     exclude: [
-      'tests/example.spec.ts',
-      'tests-examples/**/*',
+      'tests/e2e/*',
       'node_modules/**/*',
     ],
     pool: 'forks',
