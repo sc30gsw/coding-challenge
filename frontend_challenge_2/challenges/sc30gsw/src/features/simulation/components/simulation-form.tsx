@@ -46,7 +46,6 @@ export function SimulationForm({ defaultValues, onSubmit }: SimulationFormProps)
   return (
     <FormProvider {...form}>
       <div className="mx-auto max-w-2xl space-y-4">
-        {/* ステップ進捗インジケーター */}
         <SimulationProgress steps={steps} />
         <form
           onSubmit={(e) => {
@@ -55,7 +54,6 @@ export function SimulationForm({ defaultValues, onSubmit }: SimulationFormProps)
           }}
           className="space-y-4"
         >
-          {/* 郵便番号セクション */}
           <section className="rounded-lg bg-white p-6">
             <SectionHeader title="郵便番号を入力してください" className="mb-4" />
             <FieldLabel label="電気を使用する場所の郵便番号" />
@@ -65,12 +63,10 @@ export function SimulationForm({ defaultValues, onSubmit }: SimulationFormProps)
             />
           </section>
 
-          {/* 電気使用状況セクション */}
           <section className="rounded-lg bg-white p-6">
             <SectionHeader title="電気のご使用状況について教えてください" />
 
             <div className="space-y-6">
-              {/* 電力会社 */}
               <div>
                 <FieldLabel label="電力会社" />
                 <CompanySelectField
@@ -81,7 +77,6 @@ export function SimulationForm({ defaultValues, onSubmit }: SimulationFormProps)
                 />
               </div>
 
-              {/* プラン */}
               <div>
                 <FieldLabel label="プラン" />
                 <PlanSelectField
@@ -92,7 +87,6 @@ export function SimulationForm({ defaultValues, onSubmit }: SimulationFormProps)
                 />
               </div>
 
-              {/* 契約容量 */}
               {formState.enabledFields.capacity && (
                 <div>
                   <FieldLabel label="契約容量" />
@@ -107,12 +101,10 @@ export function SimulationForm({ defaultValues, onSubmit }: SimulationFormProps)
             </div>
           </section>
 
-          {/* 現在の電気使用状況セクション */}
           <section className="rounded-lg bg-white p-6">
             <SectionHeader title="現在の電気の使用状況について教えてください" />
 
             <div className="space-y-6">
-              {/* 電気代 */}
               <div>
                 <FieldLabel label="先月の電気代は？" />
                 <ElectricityBillField
@@ -121,7 +113,6 @@ export function SimulationForm({ defaultValues, onSubmit }: SimulationFormProps)
                 />
               </div>
 
-              {/* メールアドレス */}
               <div>
                 <FieldLabel label="メールアドレス" />
                 <EmailField
@@ -132,7 +123,6 @@ export function SimulationForm({ defaultValues, onSubmit }: SimulationFormProps)
             </div>
           </section>
 
-          {/* エラー表示 */}
           {customErrors.submit && (
             <div className="flex items-center gap-3 rounded-lg bg-red-400 p-4 text-white">
               <IconAlertTriangleFilled size={20} />
@@ -140,7 +130,6 @@ export function SimulationForm({ defaultValues, onSubmit }: SimulationFormProps)
             </div>
           )}
 
-          {/* アクションボタン */}
           <div className="mx-6 flex flex-col items-center gap-3">
             <button
               type="submit"

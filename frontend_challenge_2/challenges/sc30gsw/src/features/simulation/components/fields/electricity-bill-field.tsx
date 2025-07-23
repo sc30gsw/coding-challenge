@@ -16,12 +16,10 @@ export function ElectricityBillField({
 }: ElectricityBillFieldProps) {
   const { control } = useFormContext<SimulationFormData>()
 
-  // 数値をカンマ区切りでフォーマット
   const formatNumber = (num: number): string => {
     return num.toLocaleString("ja-JP")
   }
 
-  // カンマを削除して数値に変換
   const parseNumber = (str: string): number => {
     const cleanStr = str.replace(/,/g, "")
     return cleanStr === "" ? 0 : Number(cleanStr)

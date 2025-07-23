@@ -260,9 +260,6 @@ export function isFieldEnabled(
   return analyzeFormState(formData).enabledFields[fieldName]
 }
 
-/**
- * フィールド変更に応じたリセット対象フィールドの定義
- */
 const FIELD_RESET_MAP = {
   postalCode: ["area", "company", "plan", "capacity"],
   company: ["plan", "capacity"],
@@ -291,7 +288,7 @@ export function getFieldsToReset(
 ) {
   const fieldsToReset = new Set<keyof SimulationFormData>()
 
-  // 郵便番号変更の特別処理（エリア判定が必要）
+  // ? 郵便番号変更時、エリアが変更された場合、フォームをリセットする必要がある
   if (previousData.postalCode !== newData.postalCode) {
     if (hasAreaChanged(previousData.postalCode, newData.postalCode)) {
       FIELD_RESET_MAP.postalCode.forEach((field) => fieldsToReset.add(field))

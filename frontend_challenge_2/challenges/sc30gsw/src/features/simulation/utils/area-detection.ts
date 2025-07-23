@@ -7,7 +7,6 @@ import type { ElectricityArea } from "~/features/simulation/types"
  * @returns エリア判定結果
  */
 export function detectAreaFromPostalCode(postalCode: string) {
-  // 郵便番号の形式チェック
   if (!postalCode || postalCode.length !== 7) {
     return {
       area: "unsupported",
@@ -118,7 +117,7 @@ export function validatePostalCodeChange(
     }
   }
 
-  // エリアが変更された場合、フォームをリセットする必要がある
+  // ? エリアが変更された場合、フォームをリセットする必要がある
   const shouldResetForm = previousArea !== undefined && previousArea !== result.area
 
   return {

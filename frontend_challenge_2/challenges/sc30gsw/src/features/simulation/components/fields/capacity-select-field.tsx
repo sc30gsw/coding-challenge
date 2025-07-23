@@ -29,7 +29,6 @@ export function CapacitySelectField({
 }: CapacitySelectFieldProps) {
   const { control } = useFormContext<SimulationFormData>()
 
-  // プランに対応する契約容量オプションを取得
   const capacityResult =
     company && plan ? generateCapacityOptions(company, plan) : { options: [], isRequired: false }
   const capacityOptions = capacityResult.options

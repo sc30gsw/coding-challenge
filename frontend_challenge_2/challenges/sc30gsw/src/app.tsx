@@ -21,7 +21,6 @@ export function App() {
     <main className="min-h-screen bg-gray-50">
       {currentPage === "form" && (
         <>
-          {/* ヘッダーセクション */}
           <div className="bg-white py-8 text-center">
             <h1 className="font-bold text-2xl text-gray-900 leading-tight">
               電気代から

@@ -18,14 +18,10 @@ type UseSimulationFormOptions = {
   defaultValues?: Partial<SimulationFormData>
   onSubmit?: (data: SimulationFormData) => void | Promise<void>
 }
-/**
- * 電気料金シミュレーションフォームの状態管理フック
- */
+
 export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulationFormOptions = {}) {
-  // フォーム状態
   const [customErrors, setCustomErrors] = useState<Record<string, string>>({})
 
-  // 最終的なデフォルト値を構築
   const finalDefaultValues = useMemo(() => {
     const baseDefaults = {
       postalCode: "",
@@ -59,13 +55,8 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
     clearErrors,
   } = form
 
-  // 現在のフォームデータ
   const formData = watch()
-
-  // フォーム状態分析
   const formState = useMemo(() => analyzeFormState(formData), [formData])
-
-  // フォームエラーを文字列形式に変換
   const formErrors = useMemo(() => {
     const formErrorsMap: Record<string, string> = {}
     Object.entries(errors).forEach(([key, error]) => {
@@ -77,16 +68,13 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
     return { ...formErrorsMap, ...customErrors }
   }, [errors, customErrors])
 
-  // ステップ情報（エラー付き）
   const steps = useMemo(
     () => updateFormStepsWithErrors(formData, formErrors),
     [formData, formErrors],
   )
 
-  // 送信可能かどうか
   const canSubmit = useMemo(() => canSubmitForm(formData, formErrors), [formData, formErrors])
 
-  // 郵便番号変更時のエリア自動設定とフォームリセット
   const handlePostalCodeChange = useCallback(
     (postalCode: string) => {
       const previousFormData = getValues()
@@ -95,7 +83,6 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
       // エリアを自動設定
       setValue("area", areaResult.area as "tokyo" | "kansai" | "unsupported")
 
-      // エラーメッセージの設定/クリア
       setCustomErrors((prev) => {
         const newErrors = { ...prev }
         if (areaResult.errorMessage) {
@@ -111,14 +98,12 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
         clearErrors("postalCode")
       }
 
-      // フォームリセットが必要なフィールドを特定
       const fieldsToReset = getFieldsToReset(previousFormData, {
         ...previousFormData,
         postalCode,
         area: areaResult.area as "tokyo" | "kansai" | "unsupported",
       })
 
-      // 必要に応じてフィールドをリセット
       if (fieldsToReset.length > 0) {
         resetFieldsFromIndex(fieldsToReset)
       }
@@ -126,7 +111,6 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
     [form],
   )
 
-  // 電力会社変更時の処理
   const handleCompanyChange = useCallback(
     (company: SimulationFormData["company"]) => {
       const previousFormData = form.getValues()
@@ -142,7 +126,6 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
         return newErrors
       })
 
-      // プラン以降をリセット
       const fieldsToReset = getFieldsToReset(previousFormData, { ...previousFormData, company })
 
       if (fieldsToReset.length > 0) {
@@ -152,12 +135,10 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
     [form],
   )
 
-  // プラン変更時の処理
   const handlePlanChange = useCallback(
     (plan: SimulationFormData["plan"]) => {
       const previousFormData = getValues()
 
-      // 契約容量をリセット
       const fieldsToReset = getFieldsToReset(previousFormData, { ...previousFormData, plan })
 
       if (fieldsToReset.length > 0) {
@@ -167,14 +148,13 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
     [form],
   )
 
-  // フィールドリセット関数
   const resetFieldsFromIndex = useCallback(
     (fieldNames: Array<keyof SimulationFormData>) => {
       fieldNames.forEach((fieldName) => {
         if (fieldName === "area") {
-          // エリアは郵便番号から自動設定されるのでスキップ
           return
         }
+
         if (fieldName === "capacity") {
           setValue("capacity", null)
         } else {
@@ -185,26 +165,22 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
     [form],
   )
 
-  // フォーム全体リセット
   const resetForm = useCallback(() => {
     reset()
     setCustomErrors({})
   }, [form])
 
-  // フォーム送信処理
   const submit = useCallback(() => {
     const submitHandler = handleSubmit(async (data) => {
       try {
         const typedData = data as unknown as SimulationFormData
 
-        // カスタムバリデーション実行
         const customValidationErrors = validateSimulationForm(typedData)
         if (Object.keys(customValidationErrors).length > 0) {
           setCustomErrors(customValidationErrors)
           return
         }
 
-        // 送信処理実行
         await onSubmit?.(typedData)
       } catch (error) {
         console.error("Form submission error:", error)

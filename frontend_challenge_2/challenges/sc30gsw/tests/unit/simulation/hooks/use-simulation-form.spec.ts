@@ -85,7 +85,6 @@ vi.mock('~/features/simulation/utils/form-state', () => ({
   updateFormStepsWithErrors: vi.fn(() => []),
 }))
 
-// zodResolverモック
 vi.mock('@hookform/resolvers/zod', () => ({
   zodResolver: vi.fn(() => vi.fn()),
 }))
@@ -181,7 +180,6 @@ describe('use-simulation-form', () => {
       
       result.handlePostalCodeChange('invalid')
       
-      // カスタムエラーが設定されることを確認
       expect(result.formErrors).toBeDefined()
     })
 
@@ -190,7 +188,6 @@ describe('use-simulation-form', () => {
       
       result.handlePostalCodeChange('1111111')
       
-      // React Hook FormのclearErrorsが呼ばれることを確認
       expect(mockClearErrors).toHaveBeenCalledWith('postalCode')
     })
 
@@ -217,7 +214,6 @@ describe('use-simulation-form', () => {
       
       result.handleCompanyChange('other')
       
-      // カスタムエラーが設定されることを確認
       expect(result.customErrors).toBeDefined()
     })
   })
@@ -240,7 +236,6 @@ describe('use-simulation-form', () => {
     })
 
     it('リセット実行時にReact Hook Formのresetが呼ばれる', () => {
-      // モックをリセット
       vi.clearAllMocks()
       
       const result = useSimulationForm()
@@ -285,7 +280,6 @@ describe('use-simulation-form', () => {
     })
 
     it('送信処理でhandleSubmitが呼ばれる', () => {
-      // モックをリセット
       vi.clearAllMocks()
       
       const mockOnSubmit = vi.fn()

@@ -334,8 +334,8 @@ describe('simulation-schema', () => {
 
     it('郵便番号とエリアの不整合でエラー', () => {
       const data = {
-        postalCode: '1234567', // tokyo
-        area: 'kansai', // 不整合
+        postalCode: '1234567',
+        area: 'kansai',
       } as const satisfies PartialSimulationFormData
       
       const errors = validateSimulationForm(data)
@@ -343,9 +343,10 @@ describe('simulation-schema', () => {
     })
 
     it('電力会社とプランの不正な組み合わせでエラー', () => {
+      // ? 東京電力では従量電灯Aは無効
       const data = {
         company: 'tepco',
-        plan: 'juryoA', // 東京電力では無効
+        plan: 'juryoA',
       } as const satisfies PartialSimulationFormData
       
       const errors = validateSimulationForm(data)
@@ -353,10 +354,11 @@ describe('simulation-schema', () => {
     })
 
     it('プランと契約容量の不正な組み合わせでエラー', () => {
+      // ? 関西電力従量電灯Aでは契約容量不要
       const data = {
+        capacity: '30A',
         company: 'kepco',
         plan: 'juryoA',
-        capacity: '30A', // 関西電力従量電灯Aでは契約容量不要
       } as const satisfies PartialSimulationFormData
       
       const errors = validateSimulationForm(data)
@@ -364,11 +366,12 @@ describe('simulation-schema', () => {
     })
 
     it('複数のエラーがある場合すべて返す', () => {
+      // ? 郵便番号とエリアの不整合、電力会社とプランの不正な組み合わせ
       const data = {
         postalCode: '1234567',
-        area: 'kansai', // 不整合
+        area: 'kansai',
         company: 'tepco',
-        plan: 'juryoA', // 無効な組み合わせ
+        plan: 'juryoA',
         capacity: null,
       } as const satisfies PartialSimulationFormData
       
@@ -378,9 +381,9 @@ describe('simulation-schema', () => {
     })
 
     it('フィールドが不足している場合はチェックをスキップ', () => {
+      // ? planが不足
       const data = {
         company: 'tepco',
-        // planが不足
       } as const satisfies PartialSimulationFormData
       
       const errors = validateSimulationForm(data)

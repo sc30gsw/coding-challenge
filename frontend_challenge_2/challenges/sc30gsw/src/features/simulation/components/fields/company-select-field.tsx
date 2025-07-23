@@ -26,7 +26,6 @@ export function CompanySelectField({
 }: CompanySelectFieldProps) {
   const { control } = useFormContext<SimulationFormData>()
 
-  // エリアに対応した電力会社をフィルタリング
   const availableCompanies = ELECTRICITY_COMPANIES.filter(
     (company) => company.area === area || company.code === "other",
   )

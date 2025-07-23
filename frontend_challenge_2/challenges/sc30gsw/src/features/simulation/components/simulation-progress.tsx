@@ -2,12 +2,7 @@ import { IconCheck } from "@tabler/icons-react"
 import { clsx } from "clsx"
 import type { FormStep } from "~/features/simulation/types"
 
-type SimulationProgressProps = {
-  steps: FormStep[]
-}
-
-export function SimulationProgress({ steps }: SimulationProgressProps) {
-  // 現在のステップを特定
+export function SimulationProgress({ steps }: Record<"steps", FormStep[]>) {
   const currentStepIndex = steps.findIndex((step) => step.enabled && !step.completed)
   const currentStep = currentStepIndex >= 0 ? steps[currentStepIndex] : null
 

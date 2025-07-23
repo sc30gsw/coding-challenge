@@ -13,7 +13,6 @@ export function ErrorBoundary({ children, fallback, onError }: ErrorBoundaryProp
       FallbackComponent={fallback || ErrorFallback}
       onError={onError}
       onReset={() => {
-        // 必要に応じてリセット時の処理を追加
         window.location.reload()
       }}
     >

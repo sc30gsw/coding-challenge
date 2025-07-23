@@ -6,7 +6,6 @@ import type {
   FormStep,
 } from "~/features/simulation/types"
 
-// エリア定数定義
 export const ELECTRICITY_AREAS = {
   tokyo: {
     code: "tokyo",
@@ -25,7 +24,6 @@ export const ELECTRICITY_AREAS = {
   },
 } as const satisfies Record<ElectricityArea["code"], ElectricityArea>
 
-// 契約容量オプション定義
 export const CAPACITY_OPTIONS = {
   tepcoJuryoB: [
     { value: "10A", label: "10A", unit: "A" },
@@ -49,7 +47,6 @@ export const CAPACITY_OPTIONS = {
   })),
 } as const satisfies Record<string, CapacityOption[]>
 
-// 電気プラン定義
 export const ELECTRICITY_PLANS = [
   {
     code: "juryoB",
@@ -81,7 +78,6 @@ export const ELECTRICITY_PLANS = [
   },
 ] as const satisfies ElectricityPlan[]
 
-// 電力会社定義
 export const ELECTRICITY_COMPANIES = [
   {
     code: "tepco",
@@ -103,7 +99,6 @@ export const ELECTRICITY_COMPANIES = [
   },
 ] as const satisfies ElectricityCompany[]
 
-// フォームステップ定義
 export const FORM_STEPS = [
   {
     id: "postal-code",

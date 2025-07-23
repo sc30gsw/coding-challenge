@@ -1,28 +1,23 @@
 import { z } from "zod"
 
-// 郵便番号バリデーション
 export const postalCodeSchema = z
   .string()
   .min(7, "郵便番号は7桁で入力してください。")
   .max(7, "郵便番号は7桁で入力してください。")
   .regex(/^\d{7}$/, "郵便番号は数字のみで入力してください。")
 
-// エリアバリデーション
 export const areaSchema = z.enum(["tokyo", "kansai", "unsupported"], {
   message: "サービスエリアを選択してください。",
 })
 
-// 電力会社バリデーション
 export const companySchema = z.enum(["tepco", "kepco", "other"], {
   message: "電力会社を選択してください。",
 })
 
-// プランバリデーション
 export const planSchema = z.enum(["juryoA", "juryoB", "juryoC"], {
   message: "プランを選択してください。",
 })
 
-// 契約容量バリデーション（条件付き）
 export const capacitySchema = z
   .union([
     z.enum(["10A", "15A", "20A", "30A", "40A", "50A", "60A"]), // 従量電灯B(東京)
@@ -34,7 +29,6 @@ export const capacitySchema = z
   ])
   .optional()
 
-// 電気代バリデーション
 export const electricityBillSchema = z
   .number({
     message: "電気代は数値で入力してください。",
@@ -42,12 +36,10 @@ export const electricityBillSchema = z
   .min(1000, "電気代を正しく入力してください。")
   .max(999999, "電気代が大きすぎます。")
 
-// メールアドレスバリデーション
 export const emailSchema = z
   .email("メールアドレスを正しく入力してください。")
   .min(1, "メールアドレスは必須です。")
 
-// メインの統合フォームスキーマ
 export const simulationSchema = z.object({
   postalCode: postalCodeSchema,
   area: areaSchema,
@@ -58,7 +50,6 @@ export const simulationSchema = z.object({
   email: emailSchema,
 })
 
-// 段階的バリデーション用のスキーマ
 export const stepSchemas = {
   postalCode: z.object({
     postalCode: postalCodeSchema,
@@ -97,10 +88,8 @@ export const stepSchemas = {
 } as const satisfies Record<string, z.ZodObject<any>>
 
 export type SimulationFormData = z.infer<typeof simulationSchema>
-
 export type PartialSimulationFormData = Partial<SimulationFormData>
 
-// カスタムバリデーション関数
 export const customValidations = {
   // 郵便番号に基づくエリア判定
   validatePostalCodeArea: (postalCode: string) => {

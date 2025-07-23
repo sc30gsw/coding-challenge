@@ -77,7 +77,7 @@ export function formatCapacityValue(capacity?: string | number | null, unit?: "A
   }
 
   if (typeof capacity === "string") {
-    return capacity // すでに "30A" のような形式
+    return capacity
   }
 
   if (typeof capacity === "number" && unit === "kVA") {
@@ -116,7 +116,7 @@ export function validateCapacityValue(
     }
   }
 
-  // 有効なオプションの中に含まれているかチェック
+  // 有効なオプションに含まれているかチェック
   const isValidOption = result.options.some((option) => {
     if (typeof capacity === "string") {
       return option.value === capacity
@@ -221,19 +221,29 @@ export function getRecommendedCapacity(electricityBill: number, company: string,
     return null
   }
 
-  // 東京電力従量電灯Bの場合の推奨ロジック
   if (company === "tepco" && plan === "juryoB") {
-    if (electricityBill < 3000) return "20A"
-    if (electricityBill < 5000) return "30A"
-    if (electricityBill < 8000) return "40A"
+    if (electricityBill < 3000) {
+      return "20A"
+    }
+    if (electricityBill < 5000) {
+      return "30A"
+    }
+    if (electricityBill < 8000) {
+      return "40A"
+    }
     return "50A"
   }
 
-  // kVAの場合の推奨ロジック
   if (result.unit === "kVA") {
-    if (electricityBill < 8000) return 6
-    if (electricityBill < 15000) return 10
-    if (electricityBill < 25000) return 15
+    if (electricityBill < 8000) {
+      return 6
+    }
+    if (electricityBill < 15000) {
+      return 10
+    }
+    if (electricityBill < 25000) {
+      return 15
+    }
     return 20
   }
 
