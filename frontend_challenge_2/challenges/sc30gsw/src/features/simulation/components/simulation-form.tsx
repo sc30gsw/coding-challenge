@@ -1,4 +1,4 @@
-import { IconAlertTriangleFilled, IconCircleArrowRight } from "@tabler/icons-react"
+import { IconAlertTriangleFilled, IconCircleArrowRight, IconLoader } from "@tabler/icons-react"
 import { clsx } from "clsx"
 import { FormProvider } from "react-hook-form"
 import { FieldLabel } from "~/components/ui/field-label"
@@ -31,7 +31,6 @@ export function SimulationForm({ defaultValues, onSubmit }: SimulationFormProps)
     isSubmitting,
     canSubmit,
     customErrors,
-    formErrors,
     submit,
   } = useSimulationForm({ defaultValues, onSubmit })
   const {
@@ -136,12 +135,14 @@ export function SimulationForm({ defaultValues, onSubmit }: SimulationFormProps)
               disabled={!canSubmit || isSubmitting}
               className={clsx(
                 "relative flex w-full items-center justify-center rounded-lg px-6 py-4 font-medium text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2",
-                canSubmit && !isSubmitting && "bg-slate-600 hover:bg-slate-700",
+                canSubmit && !isSubmitting && "cursor-pointer bg-slate-600 hover:bg-slate-700",
                 (!canSubmit || isSubmitting) && "cursor-not-allowed bg-gray-400",
               )}
             >
               {isSubmitting ? "送信中..." : "結果を見る"}
-              {!isSubmitting && (
+              {isSubmitting ? (
+                <IconLoader className="absolute top-4 right-4 animate-spin" />
+              ) : (
                 <IconCircleArrowRight stroke={2} size={20} className="absolute top-5 right-4" />
               )}
             </button>
@@ -149,57 +150,12 @@ export function SimulationForm({ defaultValues, onSubmit }: SimulationFormProps)
             <button
               type="button"
               onClick={resetForm}
-              className="text-gray-600 text-sm underline transition-colors hover:text-gray-800"
+              className="cursor-pointer text-gray-600 text-sm underline transition-colors hover:text-gray-800 hover:opacity-70"
             >
               リセット
             </button>
           </div>
         </form>
-
-        {/* デバッグ情報（開発時のみ） */}
-        {process.env.NODE_ENV === "development" && (
-          <details className="rounded-lg border bg-gray-50 p-4">
-            <summary className="cursor-pointer font-medium text-gray-900">デバッグ情報</summary>
-            <div className="mt-4 space-y-2 text-sm">
-              <div>
-                <strong>フォームデータ:</strong>
-                <pre className="mt-1 rounded bg-gray-100 p-2 text-xs">
-                  {JSON.stringify(formData, null, 2)}
-                </pre>
-              </div>
-              <div>
-                <strong>フォーム状態:</strong>
-                <pre className="mt-1 rounded bg-gray-100 p-2 text-xs">
-                  {JSON.stringify(formState, null, 2)}
-                </pre>
-              </div>
-              <div>
-                <strong>エラー (errors + customErrors):</strong>
-                <pre className="mt-1 rounded bg-gray-100 p-2 text-xs">
-                  {JSON.stringify({ ...errors, ...customErrors }, null, 2)}
-                </pre>
-              </div>
-              <div>
-                <strong>formErrors (実際の判定用):</strong>
-                <pre className="mt-1 rounded bg-gray-100 p-2 text-xs">
-                  {JSON.stringify(formErrors, null, 2)}
-                </pre>
-              </div>
-              <div>
-                <strong>canSubmit:</strong>
-                <pre className="mt-1 rounded bg-gray-100 p-2 text-xs">
-                  {JSON.stringify({ canSubmit, isFormComplete: formState.isFormComplete }, null, 2)}
-                </pre>
-              </div>
-              <div>
-                <strong>ステップ完了状態:</strong>
-                <pre className="mt-1 rounded bg-gray-100 p-2 text-xs">
-                  {JSON.stringify(formState.completedSteps, null, 2)}
-                </pre>
-              </div>
-            </div>
-          </details>
-        )}
       </div>
     </FormProvider>
   )
