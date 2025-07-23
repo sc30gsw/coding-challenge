@@ -33,10 +33,42 @@ vi.mock('~/hooks/use-safe-form', () => ({
 
 vi.mock('~/features/simulation/utils/area-detection', () => ({
   detectAreaFromPostalCode: vi.fn((postalCode: string) => {
-    if (postalCode === '1234567') {
+    // 郵便番号の形式チェック
+    if (!postalCode || postalCode.length !== 7) {
+      return {
+        area: 'unsupported',
+        isSupported: false,
+        errorMessage: '郵便番号は7桁で入力してください。',
+      }
+    }
+
+    // 数字のみかチェック
+    if (!/^\d{7}$/.test(postalCode)) {
+      return {
+        area: 'unsupported',
+        isSupported: false,
+        errorMessage: '郵便番号は数字のみで入力してください。',
+      }
+    }
+
+    const firstDigit = postalCode.charAt(0)
+
+    // 東京電力エリア判定（先頭が1）
+    if (firstDigit === '1') {
       return { area: 'tokyo', isSupported: true }
     }
-    return { area: 'unsupported', isSupported: false, errorMessage: 'エラー' }
+
+    // 関西電力エリア判定（先頭が5）
+    if (firstDigit === '5') {
+      return { area: 'kansai', isSupported: true }
+    }
+
+    // その他のエリア（対象外）
+    return {
+      area: 'unsupported',
+      isSupported: false,
+      errorMessage: 'サービスエリア対象外です。',
+    }
   }),
 }))
 
