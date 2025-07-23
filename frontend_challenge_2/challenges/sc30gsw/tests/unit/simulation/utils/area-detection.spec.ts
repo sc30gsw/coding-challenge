@@ -48,7 +48,7 @@ describe('area-detection', () => {
         area: 'unsupported',
         areaName: 'サービスエリア対象外',
         isSupported: false,
-        errorMessage: '郵便番号は7桁で入力してください',
+        errorMessage: '郵便番号は7桁で入力してください。',
       })
     })
 
@@ -59,7 +59,7 @@ describe('area-detection', () => {
         area: 'unsupported',
         areaName: 'サービスエリア対象外',
         isSupported: false,
-        errorMessage: '郵便番号は数字のみで入力してください',
+        errorMessage: '郵便番号は数字のみで入力してください。',
       })
     })
 
@@ -70,7 +70,7 @@ describe('area-detection', () => {
         area: 'unsupported',
         areaName: 'サービスエリア対象外',
         isSupported: false,
-        errorMessage: '郵便番号は7桁で入力してください',
+        errorMessage: '郵便番号は7桁で入力してください。',
       })
     })
   })
@@ -156,7 +156,7 @@ describe('area-detection', () => {
         isValid: false,
         newArea: 'unsupported',
         shouldResetForm: false,
-        errorMessage: '郵便番号は7桁で入力してください',
+        errorMessage: '郵便番号は7桁で入力してください。',
       })
     })
   })
@@ -167,7 +167,7 @@ describe('area-detection', () => {
       
       expect(result).toEqual({
         canPredict: false,
-        feedback: '郵便番号を入力してください',
+        feedback: '郵便番号を入力してください。',
       })
     })
 
@@ -177,7 +177,7 @@ describe('area-detection', () => {
       expect(result).toEqual({
         canPredict: true,
         predictedArea: 'tokyo',
-        feedback: '東京電力エリアです',
+        feedback: '東京電力エリアです。',
       })
     })
 
@@ -187,7 +187,7 @@ describe('area-detection', () => {
       expect(result).toEqual({
         canPredict: true,
         predictedArea: 'kansai',
-        feedback: '関西電力エリアです',
+        feedback: '関西電力エリアです。',
       })
     })
 
@@ -197,7 +197,7 @@ describe('area-detection', () => {
       expect(result).toEqual({
         canPredict: true,
         predictedArea: 'unsupported',
-        feedback: 'サービスエリア対象外の可能性があります',
+        feedback: 'サービスエリア対象外の可能性があります。',
       })
     })
 
@@ -207,7 +207,7 @@ describe('area-detection', () => {
       expect(result).toEqual({
         canPredict: true,
         predictedArea: 'tokyo',
-        feedback: '東京電力エリアです',
+        feedback: '東京電力エリアです。',
       })
     })
   })
