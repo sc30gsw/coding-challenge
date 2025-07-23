@@ -102,11 +102,14 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
           newErrors.postalCode = areaResult.errorMessage
         } else {
           delete newErrors.postalCode
-          // React Hook Formのエラーもクリア
-          clearErrors("postalCode")
         }
         return newErrors
       })
+
+      // ? clearErrors("postalCode") を実行しないとcanSubmitの状態が更新されず、ボタンが活性化しない
+      if (!areaResult.errorMessage) {
+        clearErrors("postalCode")
+      }
 
       // フォームリセットが必要なフィールドを特定
       const fieldsToReset = getFieldsToReset(previousFormData, {
