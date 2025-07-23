@@ -68,7 +68,7 @@ export function PlanSelectField({
         return (
           <FieldWrapper name="plan" error={error} disabled={disabled} hideLabel={true}>
             <div className="relative">
-              <div className="absolute left-2 sm:left-3 top-5 transform -translate-y-1/2 z-10 pointer-events-none">
+              <div className="-translate-y-1/2 pointer-events-none absolute top-5 left-2 z-10 transform sm:left-3">
                 <IconChevronDown stroke={3} size={24} className="text-red-400" />
               </div>
               <Select<PlanOption, false>
@@ -81,10 +81,10 @@ export function PlanSelectField({
                 options={planOptions}
                 placeholder="プランを選択してください"
                 isDisabled={disabled}
-                styles={createSelectStyles<PlanOption>({ 
-                  error, 
-                  disabled, 
-                  hasDescription: hasDescription(field)
+                styles={createSelectStyles<PlanOption>({
+                  error,
+                  disabled,
+                  hasDescription: hasDescription(field),
                 })}
                 isSearchable={false}
                 components={{
@@ -95,7 +95,7 @@ export function PlanSelectField({
               {field.value && getSelectedPlanDescription(field.value) && (
                 <div
                   className={clsx(
-                    "border-t-0 rounded-b-md border bg-gray-100 p-2 sm:p-3 text-gray-700 text-xs sm:text-sm leading-relaxed",
+                    "rounded-b-md border border-t-0 bg-gray-100 p-2 text-gray-700 text-xs leading-relaxed sm:p-3 sm:text-sm",
                     error && "border-red-300",
                     disabled && !error && "border-gray-200",
                     !error && !disabled && "border-gray-300",

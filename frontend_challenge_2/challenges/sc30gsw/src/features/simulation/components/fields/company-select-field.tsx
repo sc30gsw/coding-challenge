@@ -25,7 +25,7 @@ export function CompanySelectField({
   onChange,
 }: CompanySelectFieldProps) {
   const { control } = useFormContext<SimulationFormData>()
-  
+
   // エリアに対応した電力会社をフィルタリング
   const availableCompanies = ELECTRICITY_COMPANIES.filter(
     (company) => company.area === area || company.code === "other",
@@ -43,12 +43,12 @@ export function CompanySelectField({
       name="company"
       control={control}
       render={({ field }) => {
-        const selectedOption = companyOptions.find(option => option.value === field.value) || null
-        
+        const selectedOption = companyOptions.find((option) => option.value === field.value) || null
+
         return (
           <FieldWrapper name="company" error={error} disabled={disabled} hideLabel={true}>
             <div className="relative">
-              <div className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 z-10 pointer-events-none">
+              <div className="-translate-y-1/2 pointer-events-none absolute top-1/2 left-2 z-10 transform sm:left-3">
                 <IconChevronDown stroke={3} size={24} className="text-red-400" />
               </div>
               <Select<CompanyOption, false>

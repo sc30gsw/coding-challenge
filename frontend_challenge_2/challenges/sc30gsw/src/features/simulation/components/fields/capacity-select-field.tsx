@@ -28,7 +28,7 @@ export function CapacitySelectField({
   onChange,
 }: CapacitySelectFieldProps) {
   const { control } = useFormContext<SimulationFormData>()
-  
+
   // プランに対応する契約容量オプションを取得
   const capacityResult =
     company && plan ? generateCapacityOptions(company, plan) : { options: [], isRequired: false }
@@ -46,25 +46,25 @@ export function CapacitySelectField({
       name="capacity"
       control={control}
       render={({ field }) => {
-        const selectedOption = selectOptions.find(option => 
-          String(option.value) === String(field.value ?? "")
-        ) || null
-        
+        const selectedOption =
+          selectOptions.find((option) => String(option.value) === String(field.value ?? "")) || null
+
         return (
           <FieldWrapper name="capacity" error={error} disabled={disabled} hideLabel={true}>
             <div className="relative">
-              <div className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 z-10 pointer-events-none">
+              <div className="-translate-y-1/2 pointer-events-none absolute top-1/2 left-2 z-10 transform sm:left-3">
                 <IconChevronDown stroke={3} size={24} className="text-red-400" />
               </div>
               <Select<SelectCapacityOption, false>
                 value={selectedOption}
                 onChange={(newValue: SingleValue<SelectCapacityOption>) => {
                   const value = newValue?.value
-                  const capacityValue = value === undefined || value === ""
-                    ? null
-                    : ((Number.isNaN(Number(value))
-                        ? value
-                        : Number(value)) as SimulationFormData["capacity"])
+                  const capacityValue =
+                    value === undefined || value === ""
+                      ? null
+                      : ((Number.isNaN(Number(value))
+                          ? value
+                          : Number(value)) as SimulationFormData["capacity"])
                   field.onChange(capacityValue)
                   onChange?.(capacityValue)
                 }}

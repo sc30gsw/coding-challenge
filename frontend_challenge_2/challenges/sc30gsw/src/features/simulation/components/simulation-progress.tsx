@@ -16,7 +16,7 @@ export function SimulationProgress({ steps }: SimulationProgressProps) {
       <div className="mb-4 flex items-center justify-between">
         <h3 className="font-bold text-gray-900 text-sm sm:text-base">入力ステップ</h3>
         {currentStep && (
-          <span className="rounded-full bg-red-100 px-2 py-1 text-red-700 text-xs font-medium">
+          <span className="rounded-full bg-red-100 px-2 py-1 font-medium text-red-700 text-xs">
             {currentStep.name}を入力中
           </span>
         )}
@@ -31,7 +31,7 @@ export function SimulationProgress({ steps }: SimulationProgressProps) {
             <div
               key={step.id}
               className={clsx(
-                "flex items-center gap-1 rounded-full px-2 sm:px-3 py-1 text-xs font-medium transition-colors",
+                "flex items-center gap-1 rounded-full px-2 py-1 font-medium text-xs transition-colors sm:px-3",
                 isCompleted && "bg-green-100 text-green-700",
                 isActive && !isCompleted && "bg-red-100 text-red-700",
                 !isEnabled && !isCompleted && "bg-gray-100 text-gray-400",
