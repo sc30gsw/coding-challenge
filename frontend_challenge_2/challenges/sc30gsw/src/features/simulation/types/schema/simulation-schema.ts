@@ -14,9 +14,11 @@ export const companySchema = z.enum(["tepco", "kepco", "other"], {
   message: "電力会社を選択してください。",
 })
 
-export const planSchema = z.enum(["juryoA", "juryoB", "juryoC"], {
-  message: "プランを選択してください。",
-})
+export const planSchema = z
+  .enum(["juryoA", "juryoB", "juryoC"], {
+    message: "プランを選択してください。",
+  })
+  .optional()
 
 export const capacitySchema = z
   .union([
@@ -112,9 +114,13 @@ export const customValidations = {
   // 電力会社とプランの組み合わせチェック
   validateCompanyPlanCombination: (
     company: "tepco" | "kepco" | "other",
-    plan: "juryoA" | "juryoB" | "juryoC",
+    plan?: "juryoA" | "juryoB" | "juryoC",
   ) => {
-    const validCombinations: Record<typeof company, Array<typeof plan>> = {
+    if (!plan) {
+      return true
+    }
+
+    const validCombinations: Record<typeof company, Array<"juryoA" | "juryoB" | "juryoC">> = {
       tepco: ["juryoB", "juryoC"],
       kepco: ["juryoA", "juryoB"],
       other: [],

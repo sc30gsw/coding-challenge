@@ -109,7 +109,7 @@ describe('use-simulation-form', () => {
       postalCode: '',
       area: 'unsupported',
       company: 'tepco',
-      plan: 'juryoB',
+      plan: undefined,
       electricityBill: 0,
       email: '',
       capacity: null,
@@ -119,7 +119,7 @@ describe('use-simulation-form', () => {
       postalCode: '',
       area: 'unsupported',
       company: 'tepco',
-      plan: 'juryoB',
+      plan: undefined,
       electricityBill: 0,
       email: '',
       capacity: null,
@@ -135,7 +135,7 @@ describe('use-simulation-form', () => {
       expect(result.steps).toBeDefined()
       expect(result.canSubmit).toBe(false)
       expect(result.isSubmitting).toBe(false)
-      expect(result.formErrors).toBeDefined()
+      expect(result.customErrors).toBeDefined()
     })
 
     it('カスタムデフォルト値を受け取る', () => {
@@ -180,7 +180,7 @@ describe('use-simulation-form', () => {
       
       result.handlePostalCodeChange('invalid')
       
-      expect(result.formErrors).toBeDefined()
+      expect(result.customErrors).toBeDefined()
     })
 
     it('有効な郵便番号入力時にエラーがクリアされる', () => {
@@ -318,11 +318,11 @@ describe('use-simulation-form', () => {
       expect(typeof result.canSubmit).toBe('boolean')
     })
 
-    it('フォームエラーが統合されている', () => {
+    it('カスタムエラーが管理されている', () => {
       const result = useSimulationForm()
       
-      expect(result.formErrors).toBeDefined()
-      expect(typeof result.formErrors).toBe('object')
+      expect(result.customErrors).toBeDefined()
+      expect(typeof result.customErrors).toBe('object')
     })
   })
 
@@ -343,7 +343,7 @@ describe('use-simulation-form', () => {
         'resetFieldsFromIndex',
         'isSubmitting',
         'canSubmit',
-        'formErrors',
+        'customErrors',
         'submit',
       ]
       
@@ -368,7 +368,7 @@ describe('use-simulation-form', () => {
       
       expect(typeof result.isSubmitting).toBe('boolean')
       expect(typeof result.canSubmit).toBe('boolean')
-      expect(typeof result.formErrors).toBe('object')
+      expect(typeof result.customErrors).toBe('object')
       expect(Array.isArray(result.steps)).toBe(true)
     })
   })

@@ -151,7 +151,7 @@ function processEmailStep(formData: PartialSimulationFormData, state: FormStateR
     return
   }
 
-  const emailComplete = formData.email?.includes("@")
+  const emailComplete = formData.email && /^[^@\s]+@[^@\s]+\.[^@\s.]+$/.test(formData.email)
   if (!emailComplete) {
     if (state.enabledFields.email && !state.nextRequiredField) {
       state.nextRequiredField = "email"
@@ -267,16 +267,6 @@ const FIELD_RESET_MAP = {
 } as const satisfies Record<string, Array<keyof SimulationFormData>>
 
 /**
- * 郵便番号変更時のエリア判定
- */
-function hasAreaChanged(previousPostalCode: string | undefined, newPostalCode: string | undefined) {
-  const prevArea = previousPostalCode ? detectAreaFromPostalCode(previousPostalCode).area : null
-  const newArea = newPostalCode ? detectAreaFromPostalCode(newPostalCode).area : null
-
-  return prevArea !== newArea
-}
-
-/**
  * フォームのリセットが必要かどうかを判定する
  * @param previousData 変更前のフォームデータ
  * @param newData 変更後のフォームデータ
@@ -288,11 +278,9 @@ export function getFieldsToReset(
 ) {
   const fieldsToReset = new Set<keyof SimulationFormData>()
 
-  // ? 郵便番号変更時、エリアが変更された場合、フォームをリセットする必要がある
+  // ? 郵便番号変更時、フォームをリセットする必要がある
   if (previousData.postalCode !== newData.postalCode) {
-    if (hasAreaChanged(previousData.postalCode, newData.postalCode)) {
-      FIELD_RESET_MAP.postalCode.forEach((field) => fieldsToReset.add(field))
-    }
+    FIELD_RESET_MAP.postalCode.forEach((field) => fieldsToReset.add(field))
   }
 
   // その他のフィールド変更処理

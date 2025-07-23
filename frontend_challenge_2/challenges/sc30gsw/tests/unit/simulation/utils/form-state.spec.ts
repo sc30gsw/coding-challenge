@@ -245,7 +245,7 @@ describe('form-state', () => {
       expect(fieldsToReset).toContain('capacity')
     })
 
-    it('同一エリア内での郵便番号変更では関連フィールドをリセットしない', () => {
+    it('郵便番号変更時は常に関連フィールドをリセット', () => {
       const previousData = {
         postalCode: '1234567',
         company: 'tepco',
@@ -257,7 +257,7 @@ describe('form-state', () => {
 
       const fieldsToReset = getFieldsToReset(previousData, newData)
       
-      expect(fieldsToReset).toHaveLength(0)
+      expect(fieldsToReset).toEqual(['area', 'company', 'plan', 'capacity'])
     })
 
     it('電力会社変更時は関連フィールドをリセット', () => {

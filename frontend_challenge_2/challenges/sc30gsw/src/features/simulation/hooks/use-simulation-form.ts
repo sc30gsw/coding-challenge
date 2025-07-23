@@ -27,7 +27,7 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
       postalCode: "",
       area: "unsupported",
       company: "tepco",
-      plan: "juryoB",
+      plan: undefined,
       electricityBill: 0,
       email: "",
       capacity: null,
@@ -65,8 +65,12 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
       }
     })
 
+    if (formData.email && !/^[^@\s]+@[^@\s]+\.[^@\s.]+$/.test(formData.email)) {
+      formErrorsMap.email = "メールアドレスを正しく入力してください。"
+    }
+
     return { ...formErrorsMap, ...customErrors }
-  }, [errors, customErrors])
+  }, [errors, customErrors, formData.email])
 
   const steps = useMemo(
     () => updateFormStepsWithErrors(formData, formErrors),
@@ -205,7 +209,6 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
     isSubmitting,
     canSubmit,
     customErrors,
-    formErrors,
     submit,
   } as const
 }
