@@ -1,10 +1,16 @@
 import { IconChevronDown } from "@tabler/icons-react"
 import { clsx } from "clsx"
-import { useRef } from "react"
 import { Controller, useFormContext } from "react-hook-form"
+import Select, { type SingleValue } from "react-select"
 import { FieldWrapper } from "~/features/simulation/components/fields/field-wrapper"
 import { ELECTRICITY_COMPANIES } from "~/features/simulation/constants"
 import type { SimulationFormData } from "~/features/simulation/types/schema/simulation-schema"
+import { createSelectStyles } from "~/features/simulation/utils/select-styles"
+
+type PlanOption = {
+  value: string
+  label: string
+}
 
 type PlanSelectFieldProps = {
   error?: string
@@ -23,6 +29,11 @@ export function PlanSelectField({
 
   const selectedCompany = ELECTRICITY_COMPANIES.find((c) => c.code === company)
   const availablePlans = selectedCompany?.supportedPlans || []
+
+  const planOptions = availablePlans.map((plan) => ({
+    value: plan.code,
+    label: plan.name,
+  })) satisfies readonly PlanOption[]
 
   const getSelectedPlanDescription = (planCode: SimulationFormData["plan"]) => {
     const plan = availablePlans.find((p) => p.code === planCode)
@@ -45,58 +56,58 @@ export function PlanSelectField({
     }
   }
 
+  const hasDescription = (field: any) => field.value && getSelectedPlanDescription(field.value)
+
   return (
     <Controller
       name="plan"
       control={control}
-      render={({ field }) => (
-        <FieldWrapper name="plan" error={error} disabled={disabled} hideLabel={true}>
-          <div className="relative">
-            <label
-            htmlFor="plan-select"
-              className="-translate-y-1/2 absolute top-5 left-2 sm:left-3 z-10 transform cursor-pointer"
-            >
-              <IconChevronDown stroke={3} size={24} className="text-red-400" />
-            </label>
-            <select
-              {...field}
-              id="plan-select"
-              
-              disabled={disabled}
-              className={clsx(
-                "w-full appearance-none border bg-white py-2 sm:py-3 pr-2 sm:pr-3 pl-10 sm:pl-12 text-base sm:text-lg font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2",
-                (field.value && getSelectedPlanDescription(field.value)) ? "rounded-t-md border-b-0" : "rounded-md",
-                error && "border-red-300 bg-red-50 focus:border-red-500",
-                disabled && !error && "border-gray-200 bg-gray-50 text-gray-400",
-                !error && !disabled && "border-gray-300 hover:border-gray-400 focus:border-red-400",
-              )}
-              onChange={(e) => {
-                field.onChange(e.target.value)
-                onChange?.(e.target.value as SimulationFormData["plan"])
-              }}
-            >
-              <option value="">プランを選択してください</option>
-              {availablePlans.map((plan) => (
-                <option key={plan.code} value={plan.code}>
-                  {plan.name}
-                </option>
-              ))}
-            </select>
-            {field.value && getSelectedPlanDescription(field.value) && (
-              <div
-                className={clsx(
-                  "border-t-0 rounded-b-md border bg-gray-100 p-2 sm:p-3 text-gray-700 text-xs sm:text-sm leading-relaxed",
-                  error && "border-red-300",
-                  disabled && !error && "border-gray-200",
-                  !error && !disabled && "border-gray-300",
-                )}
-              >
-                {getSelectedPlanDescription(field.value)}
+      render={({ field }) => {
+        const selectedOption = planOptions.find((option) => option.value === field.value) || null
+
+        return (
+          <FieldWrapper name="plan" error={error} disabled={disabled} hideLabel={true}>
+            <div className="relative">
+              <div className="absolute left-2 sm:left-3 top-5 transform -translate-y-1/2 z-10 pointer-events-none">
+                <IconChevronDown stroke={3} size={24} className="text-red-400" />
               </div>
-            )}
-          </div>
-        </FieldWrapper>
-      )}
+              <Select<PlanOption, false>
+                value={selectedOption}
+                onChange={(newValue: SingleValue<PlanOption>) => {
+                  const value = newValue?.value || ""
+                  field.onChange(value)
+                  onChange?.(value as SimulationFormData["plan"])
+                }}
+                options={planOptions}
+                placeholder="プランを選択してください"
+                isDisabled={disabled}
+                styles={createSelectStyles<PlanOption>({ 
+                  error, 
+                  disabled, 
+                  hasDescription: hasDescription(field)
+                })}
+                isSearchable={false}
+                components={{
+                  DropdownIndicator: () => null,
+                  IndicatorSeparator: () => null,
+                }}
+              />
+              {field.value && getSelectedPlanDescription(field.value) && (
+                <div
+                  className={clsx(
+                    "border-t-0 rounded-b-md border bg-gray-100 p-2 sm:p-3 text-gray-700 text-xs sm:text-sm leading-relaxed",
+                    error && "border-red-300",
+                    disabled && !error && "border-gray-200",
+                    !error && !disabled && "border-gray-300",
+                  )}
+                >
+                  {getSelectedPlanDescription(field.value)}
+                </div>
+              )}
+            </div>
+          </FieldWrapper>
+        )
+      }}
     />
   )
 }
