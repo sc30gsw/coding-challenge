@@ -68,30 +68,33 @@ export function PlanSelectField({
         return (
           <FieldWrapper name="plan" error={error} disabled={disabled} hideLabel={true}>
             <div className="relative">
-              <div className="-translate-y-1/2 pointer-events-none absolute top-5 left-2 z-10 transform sm:left-3">
+              <div className="-translate-y-1/2 pointer-events-none absolute top-6 left-2 z-10 transform sm:left-3">
                 <IconChevronDown stroke={3} size={24} className="text-red-400" />
               </div>
-              <Select<PlanOption, false>
-                value={selectedOption}
-                onChange={(newValue: SingleValue<PlanOption>) => {
-                  const value = newValue?.value || ""
-                  field.onChange(value)
-                  onChange?.(value as SimulationFormData["plan"])
-                }}
-                options={planOptions}
-                placeholder="プランを選択してください"
-                isDisabled={disabled}
-                styles={createSelectStyles<PlanOption>({
-                  error,
-                  disabled,
-                  hasDescription: hasDescription(field),
-                })}
-                isSearchable={false}
-                components={{
-                  DropdownIndicator: () => null,
-                  IndicatorSeparator: () => null,
-                }}
-              />
+              <div className={clsx(disabled ? "cursor-not-allowed" : "cursor-pointer")}>
+                <Select<PlanOption, false>
+                  value={selectedOption}
+                  onChange={(newValue: SingleValue<PlanOption>) => {
+                    const value = newValue?.value || ""
+                    field.onChange(value)
+                    onChange?.(value as SimulationFormData["plan"])
+                  }}
+                  options={planOptions}
+                  placeholder="プランを選択してください"
+                  isDisabled={disabled}
+                  styles={createSelectStyles<PlanOption>({
+                    error,
+                    disabled,
+                    hasDescription: hasDescription(field),
+                  })}
+                  isSearchable={false}
+                  aria-label="プラン"
+                  components={{
+                    DropdownIndicator: () => null,
+                    IndicatorSeparator: () => null,
+                  }}
+                />
+              </div>
               {field.value && getSelectedPlanDescription(field.value) && (
                 <div
                   className={clsx(

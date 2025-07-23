@@ -1,4 +1,5 @@
 import { IconChevronDown } from "@tabler/icons-react"
+import clsx from "clsx"
 import { Controller, useFormContext } from "react-hook-form"
 import Select, { type SingleValue } from "react-select"
 import { FieldWrapper } from "~/features/simulation/components/fields/field-wrapper"
@@ -54,29 +55,32 @@ export function CapacitySelectField({
               <div className="-translate-y-1/2 pointer-events-none absolute top-1/2 left-2 z-10 transform sm:left-3">
                 <IconChevronDown stroke={3} size={24} className="text-red-400" />
               </div>
-              <Select<SelectCapacityOption, false>
-                value={selectedOption}
-                onChange={(newValue: SingleValue<SelectCapacityOption>) => {
-                  const value = newValue?.value
-                  const capacityValue =
-                    value === undefined || value === ""
-                      ? null
-                      : ((Number.isNaN(Number(value))
-                          ? value
-                          : Number(value)) as SimulationFormData["capacity"])
-                  field.onChange(capacityValue)
-                  onChange?.(capacityValue)
-                }}
-                options={selectOptions}
-                placeholder="契約容量を選択してください"
-                isDisabled={disabled}
-                styles={customStyles}
-                isSearchable={false}
-                components={{
-                  DropdownIndicator: () => null,
-                  IndicatorSeparator: () => null,
-                }}
-              />
+              <div className={clsx(disabled ? "cursor-not-allowed" : "cursor-pointer")}>
+                <Select<SelectCapacityOption, false>
+                  value={selectedOption}
+                  onChange={(newValue: SingleValue<SelectCapacityOption>) => {
+                    const value = newValue?.value
+                    const capacityValue =
+                      value === undefined || value === ""
+                        ? null
+                        : ((Number.isNaN(Number(value))
+                            ? value
+                            : Number(value)) as SimulationFormData["capacity"])
+                    field.onChange(capacityValue)
+                    onChange?.(capacityValue)
+                  }}
+                  options={selectOptions}
+                  placeholder="契約容量を選択してください"
+                  isDisabled={disabled}
+                  styles={customStyles}
+                  isSearchable={false}
+                  aria-label="契約容量"
+                  components={{
+                    DropdownIndicator: () => null,
+                    IndicatorSeparator: () => null,
+                  }}
+                />
+              </div>
             </div>
           </FieldWrapper>
         )

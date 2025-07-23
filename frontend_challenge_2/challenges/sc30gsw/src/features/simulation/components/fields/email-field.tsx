@@ -24,6 +24,7 @@ export function EmailField({ error, disabled = false, onChange }: EmailFieldProp
             type="email"
             placeholder="example@email.com"
             disabled={disabled}
+            aria-label="メールアドレス"
             className={clsx(
               "w-full rounded-md border bg-white px-2 py-2 font-semibold text-base transition-colors focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 sm:px-3 sm:py-3 sm:text-lg",
               error && "border-red-300 bg-red-50 focus:border-red-500",
