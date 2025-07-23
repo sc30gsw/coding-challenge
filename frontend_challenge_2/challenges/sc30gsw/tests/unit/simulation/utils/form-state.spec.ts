@@ -298,7 +298,7 @@ describe('form-state', () => {
         postalCode: '1234567',
       } as const satisfies PartialSimulationFormData
       const errors = {
-        company: '電力会社を選択してください',
+        company: '電力会社を選択してください。',
       }
       
       const steps = updateFormStepsWithErrors(formData, errors)

@@ -24,19 +24,19 @@ describe('simulation-schema', () => {
     it('6桁以下は無効', () => {
       const result = postalCodeSchema.safeParse('123456')
       expect(result.success).toBe(false)
-      expect(result.error?.issues[0]?.message).toBe('郵便番号は7桁で入力してください')
+      expect(result.error?.issues[0]?.message).toBe('郵便番号は7桁で入力してください。')
     })
 
     it('8桁以上は無効', () => {
       const result = postalCodeSchema.safeParse('12345678')
       expect(result.success).toBe(false)
-      expect(result.error?.issues[0]?.message).toBe('郵便番号は7桁で入力してください')
+      expect(result.error?.issues[0]?.message).toBe('郵便番号は7桁で入力してください。')
     })
 
     it('数字以外の文字は無効', () => {
       const result = postalCodeSchema.safeParse('123456a')
       expect(result.success).toBe(false)
-      expect(result.error?.issues[0]?.message).toBe('郵便番号は数字のみで入力してください')
+      expect(result.error?.issues[0]?.message).toBe('郵便番号は数字のみで入力してください。')
     })
   })
 
@@ -50,7 +50,7 @@ describe('simulation-schema', () => {
     it('無効な値は拒否する', () => {
       const result = areaSchema.safeParse('invalid')
       expect(result.success).toBe(false)
-      expect(result.error?.issues[0]?.message).toBe('サービスエリアを選択してください')
+      expect(result.error?.issues[0]?.message).toBe('サービスエリアを選択してください。')
     })
   })
 
@@ -64,7 +64,7 @@ describe('simulation-schema', () => {
     it('無効な値は拒否する', () => {
       const result = companySchema.safeParse('invalid')
       expect(result.success).toBe(false)
-      expect(result.error?.issues[0]?.message).toBe('電力会社を選択してください')
+      expect(result.error?.issues[0]?.message).toBe('電力会社を選択してください。')
     })
   })
 
@@ -78,7 +78,7 @@ describe('simulation-schema', () => {
     it('無効な値は拒否する', () => {
       const result = planSchema.safeParse('invalid')
       expect(result.success).toBe(false)
-      expect(result.error?.issues[0]?.message).toBe('プランを選択してください')
+      expect(result.error?.issues[0]?.message).toBe('プランを選択してください。')
     })
   })
 
@@ -126,19 +126,19 @@ describe('simulation-schema', () => {
     it('1000円未満は無効', () => {
       const result = electricityBillSchema.safeParse(999)
       expect(result.success).toBe(false)
-      expect(result.error?.issues[0]?.message).toBe('電気代は1000円以上で入力してください')
+      expect(result.error?.issues[0]?.message).toBe('電気代を正しく入力してください。')
     })
 
     it('999999円を超える値は無効', () => {
       const result = electricityBillSchema.safeParse(1000000)
       expect(result.success).toBe(false)
-      expect(result.error?.issues[0]?.message).toBe('電気代が大きすぎます')
+      expect(result.error?.issues[0]?.message).toBe('電気代が大きすぎます。')
     })
 
     it('文字列は無効', () => {
       const result = electricityBillSchema.safeParse('5000')
       expect(result.success).toBe(false)
-      expect(result.error?.issues[0]?.message).toBe('電気代は数値で入力してください')
+      expect(result.error?.issues[0]?.message).toBe('電気代は数値で入力してください。')
     })
   })
 
@@ -151,13 +151,13 @@ describe('simulation-schema', () => {
     it('無効なメールアドレスは拒否', () => {
       const result = emailSchema.safeParse('invalid-email')
       expect(result.success).toBe(false)
-      expect(result.error?.issues[0]?.message).toBe('メールアドレスを正しく入力してください')
+      expect(result.error?.issues[0]?.message).toBe('メールアドレスを正しく入力してください。')
     })
 
     it('空文字列は無効', () => {
       const result = emailSchema.safeParse('')
       expect(result.success).toBe(false)
-      expect(result.error?.issues[0]?.message).toBe('メールアドレスを正しく入力してください')
+      expect(result.error?.issues[0]?.message).toBe('メールアドレスを正しく入力してください。')
     })
   })
 
@@ -339,7 +339,7 @@ describe('simulation-schema', () => {
       } as const satisfies PartialSimulationFormData
       
       const errors = validateSimulationForm(data)
-      expect(errors.area).toBe('エリア判定に整合性がありません')
+      expect(errors.area).toBe('エリア判定に整合性がありません。')
     })
 
     it('電力会社とプランの不正な組み合わせでエラー', () => {
@@ -349,7 +349,7 @@ describe('simulation-schema', () => {
       } as const satisfies PartialSimulationFormData
       
       const errors = validateSimulationForm(data)
-      expect(errors.plan).toBe('選択した電力会社では利用できないプランです')
+      expect(errors.plan).toBe('選択した電力会社では利用できないプランです。')
     })
 
     it('プランと契約容量の不正な組み合わせでエラー', () => {
@@ -360,7 +360,7 @@ describe('simulation-schema', () => {
       } as const satisfies PartialSimulationFormData
       
       const errors = validateSimulationForm(data)
-      expect(errors.capacity).toBe('選択したプランでは利用できない契約容量です')
+      expect(errors.capacity).toBe('選択したプランでは利用できない契約容量です。')
     })
 
     it('複数のエラーがある場合すべて返す', () => {

@@ -3,23 +3,23 @@ import { z } from "zod"
 // 郵便番号バリデーション
 export const postalCodeSchema = z
   .string()
-  .min(7, "郵便番号は7桁で入力してください")
-  .max(7, "郵便番号は7桁で入力してください")
-  .regex(/^\d{7}$/, "郵便番号は数字のみで入力してください")
+  .min(7, "郵便番号は7桁で入力してください。")
+  .max(7, "郵便番号は7桁で入力してください。")
+  .regex(/^\d{7}$/, "郵便番号は数字のみで入力してください。")
 
 // エリアバリデーション
 export const areaSchema = z.enum(["tokyo", "kansai", "unsupported"], {
-  message: "サービスエリアを選択してください",
+  message: "サービスエリアを選択してください。",
 })
 
 // 電力会社バリデーション
 export const companySchema = z.enum(["tepco", "kepco", "other"], {
-  message: "電力会社を選択してください",
+  message: "電力会社を選択してください。",
 })
 
 // プランバリデーション
 export const planSchema = z.enum(["juryoA", "juryoB", "juryoC"], {
-  message: "プランを選択してください",
+  message: "プランを選択してください。",
 })
 
 // 契約容量バリデーション（条件付き）
@@ -28,8 +28,8 @@ export const capacitySchema = z
     z.enum(["10A", "15A", "20A", "30A", "40A", "50A", "60A"]), // 従量電灯B(東京)
     z
       .number()
-      .min(6, "契約容量は6kVA以上で選択してください")
-      .max(49, "契約容量は49kVA以下で選択してください"), // 従量電灯C(東京), 従量電灯B(関西)
+      .min(6, "契約容量は6kVA以上で選択してください。")
+      .max(49, "契約容量は49kVA以下で選択してください。"), // 従量電灯C(東京), 従量電灯B(関西)
     z.null(), // 従量電灯A(関西) - 不要
   ])
   .optional()
@@ -37,15 +37,15 @@ export const capacitySchema = z
 // 電気代バリデーション
 export const electricityBillSchema = z
   .number({
-    message: "電気代は数値で入力してください",
+    message: "電気代は数値で入力してください。",
   })
-  .min(1000, "電気代は1000円以上で入力してください")
-  .max(999999, "電気代が大きすぎます")
+  .min(1000, "電気代を正しく入力してください。")
+  .max(999999, "電気代が大きすぎます。")
 
 // メールアドレスバリデーション
 export const emailSchema = z
-  .email("メールアドレスを正しく入力してください")
-  .min(1, "メールアドレスは必須です")
+  .email("メールアドレスを正しく入力してください。")
+  .min(1, "メールアドレスは必須です。")
 
 // メインの統合フォームスキーマ
 export const simulationSchema = z.object({
@@ -168,14 +168,14 @@ export function validateSimulationForm(data: PartialSimulationFormData) {
   if (data.postalCode && data.area) {
     const expectedArea = customValidations.validatePostalCodeArea(data.postalCode)
     if (expectedArea !== data.area) {
-      errors.area = "エリア判定に整合性がありません"
+      errors.area = "エリア判定に整合性がありません。"
     }
   }
 
   // 電力会社とプランの組み合わせチェック
   if (data.company && data.plan) {
     if (!customValidations.validateCompanyPlanCombination(data.company, data.plan)) {
-      errors.plan = "選択した電力会社では利用できないプランです"
+      errors.plan = "選択した電力会社では利用できないプランです。"
     }
   }
 
@@ -184,7 +184,7 @@ export function validateSimulationForm(data: PartialSimulationFormData) {
     if (
       !customValidations.validatePlanCapacityCombination(data.company, data.plan, data.capacity)
     ) {
-      errors.capacity = "選択したプランでは利用できない契約容量です"
+      errors.capacity = "選択したプランでは利用できない契約容量です。"
     }
   }
 
