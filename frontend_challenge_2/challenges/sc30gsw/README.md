@@ -76,8 +76,12 @@ bun run preview
 │   ├── screenshots/                 # テストで撮影されたスクリーンショット（ビジュアルリグレッションテスト用）
 │   │   └── *.png                    # 任意の画面や要素のスクリーンショット
 │   ├── fixtures/                    # テストデータとモックファイル
-│   ├── unit/                        # 単体テストファイル
-│   │   └── *.test.ts                # 単体テストファイル
+│   ├── unit/                        # 単体テストディレクトリ
+│   │   └── users
+|   │        |── hooks               # カスタムhooks単体テストディレクトリ
+|   │        |     └── *.spec.ts     # カスタムhooks単体テストファイル
+|   │        └── utils               # utility単体テストディレクトリ
+|   │              └── *.spec.ts     # utility単体テストファイル
 │   └── *.spec.ts                    # 各画面のE2Eテストコード
 ├── .env.example                     # 環境変数テンプレート
 ├── biome.json                       # リンター/フォーマッター設定ファイル
@@ -85,7 +89,8 @@ bun run preview
 ├── playwright.config.ts             # Playwright設定ファイル
 ├── vitest.config.ts                 # Vitest設定ファイル
 ├── tsconfig.json                    # TypeScript設定ファイル
-└── vite.config.ts                   # Vite設定ファイル
+├── vite.config.ts                   # Vite設定ファイル
+└── vitest.config.ts                 # Vitest設定ファイル
 ```
 
 ※ components/uiやfeatures・utilsなどに記載のあるディレクトリやファイルはサンプルです

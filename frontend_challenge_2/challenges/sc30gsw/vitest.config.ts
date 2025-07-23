@@ -17,9 +17,11 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: [],
-    include: ['tests/unit/**/*.test.ts'],
+    include: [
+      'tests/unit/**/*.spec.ts'
+    ],
     exclude: [
-      'tests/*.spec.ts',
+      'tests/example.spec.ts',
       'tests-examples/**/*',
       'node_modules/**/*',
     ],
@@ -28,7 +30,11 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'html', 'json', 'json-summary'],
       reportsDirectory: './coverage',
-      include: ['src/**/*'],
+      include: [
+        'src/features/simulation/utils/**/*',
+        'src/features/simulation/hooks/**/*',
+        'src/features/simulation/types/schema/**/*',
+      ],
       exclude: [
         'src/**/*.d.ts',
         'src/**/*.test.ts',

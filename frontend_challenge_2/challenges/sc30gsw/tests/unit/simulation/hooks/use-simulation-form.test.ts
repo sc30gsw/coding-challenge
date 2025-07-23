@@ -15,7 +15,6 @@ const mockHandleSubmit = vi.fn((callback) => {
   return vi.fn(() => callback())
 })
 
-// モック設定
 vi.mock('~/hooks/use-safe-form', () => ({
   useSafeForm: vi.fn(() => ({
     watch: mockWatch,
@@ -86,7 +85,7 @@ describe('use-simulation-form', () => {
       email: '',
       capacity: null,
     })
-  })
+      })
 
   describe('useSimulationForm初期化', () => {
     it('フックが正常に初期化される', () => {
