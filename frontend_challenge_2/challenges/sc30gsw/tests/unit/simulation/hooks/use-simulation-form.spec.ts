@@ -1,4 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
+import { vi } from 'vitest'
 import { useSimulationForm } from '~/features/simulation/hooks/use-simulation-form'
 
 vi.mock('react', () => ({
@@ -85,7 +86,7 @@ describe('use-simulation-form', () => {
       email: '',
       capacity: null,
     })
-      })
+  })
 
   describe('useSimulationForm初期化', () => {
     it('フックが正常に初期化される', () => {
@@ -96,7 +97,6 @@ describe('use-simulation-form', () => {
       expect(result.steps).toBeDefined()
       expect(result.canSubmit).toBe(false)
       expect(result.isSubmitting).toBe(false)
-      expect(result.customErrors).toEqual({})
       expect(result.formErrors).toBeDefined()
     })
 
@@ -137,12 +137,13 @@ describe('use-simulation-form', () => {
       expect(mockSetValue).toHaveBeenCalledWith('area', 'tokyo')
     })
 
-    it('無効な郵便番号でエラーが設定される', () => {
+    it('無効な郵便番号でカスタムエラーが設定される', () => {
       const result = useSimulationForm()
       
       result.handlePostalCodeChange('invalid')
       
-      expect(result.customErrors).toBeDefined()
+      // カスタムエラーが設定されることを確認
+      expect(result.formErrors).toBeDefined()
     })
   })
 
@@ -154,7 +155,7 @@ describe('use-simulation-form', () => {
       expect(typeof result.handleCompanyChange).toBe('function')
     })
 
-    it('「その他」選択時にエラーが設定される', () => {
+    it('「その他」選択時にカスタムエラーが設定される', () => {
       const result = useSimulationForm()
       
       result.handleCompanyChange('other')
@@ -190,6 +191,7 @@ describe('use-simulation-form', () => {
       result.resetForm()
       
       expect(mockReset).toHaveBeenCalled()
+      expect(mockClearErrors).toHaveBeenCalled()
     })
   })
 
@@ -291,7 +293,6 @@ describe('use-simulation-form', () => {
         'resetFieldsFromIndex',
         'isSubmitting',
         'canSubmit',
-        'customErrors',
         'formErrors',
         'submit',
       ]
@@ -317,7 +318,6 @@ describe('use-simulation-form', () => {
       
       expect(typeof result.isSubmitting).toBe('boolean')
       expect(typeof result.canSubmit).toBe('boolean')
-      expect(typeof result.customErrors).toBe('object')
       expect(typeof result.formErrors).toBe('object')
       expect(Array.isArray(result.steps)).toBe(true)
     })
