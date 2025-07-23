@@ -141,18 +141,20 @@ export function SimulationForm({ defaultValues, onSubmit }: SimulationFormProps)
           )}
 
           {/* アクションボタン */}
-          <div className="flex flex-col items-center gap-3">
+          <div className="mx-6 flex flex-col items-center gap-3">
             <button
               type="submit"
               disabled={!canSubmit || isSubmitting}
               className={clsx(
-                "flex w-4/5 items-center justify-between rounded-lg px-6 py-4 font-medium text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2",
+                "relative flex w-full items-center justify-center rounded-lg px-6 py-4 font-medium text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2",
                 canSubmit && !isSubmitting && "bg-slate-600 hover:bg-slate-700",
                 (!canSubmit || isSubmitting) && "cursor-not-allowed bg-gray-400",
               )}
             >
-              <span>{isSubmitting ? "送信中..." : "結果を見る"}</span>
-              {!isSubmitting && <IconCircleArrowRight stroke={2} size={20} />}
+              {isSubmitting ? "送信中..." : "結果を見る"}
+              {!isSubmitting && (
+                <IconCircleArrowRight stroke={2} size={20} className="absolute top-5 right-4" />
+              )}
             </button>
 
             <button
