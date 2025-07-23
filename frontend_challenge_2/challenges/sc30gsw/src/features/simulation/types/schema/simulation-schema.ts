@@ -138,7 +138,7 @@ export const customValidations = {
   validatePlanCapacityCombination: (
     company: string,
     plan: string,
-    capacity: string | number | null,
+    capacity?: string | number | null,
   ) => {
     // 関西電力の従量電灯Aは契約容量不要
     if (company === "kepco" && plan === "juryoA") {

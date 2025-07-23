@@ -71,7 +71,7 @@ export function isCapacityRequired(company: string, plan: string) {
  * @param unit 単位
  * @returns 表示用文字列
  */
-export function formatCapacityValue(capacity: string | number | null, unit: "A" | "kVA" | null) {
+export function formatCapacityValue(capacity?: string | number | null, unit?: "A" | "kVA" | null) {
   if (capacity === null || capacity === undefined) {
     return "未設定"
   }
