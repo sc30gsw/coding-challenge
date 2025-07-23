@@ -1,0 +1,67 @@
+import { clsx } from "clsx"
+import { Controller, useFormContext } from "react-hook-form"
+import { FieldWrapper } from "~/features/simulation/components/fields/field-wrapper"
+import type { SimulationFormData } from "~/features/simulation/types/schema/simulation-schema"
+
+type ElectricityBillFieldProps = {
+  error?: string
+  disabled?: boolean
+  onChange?: (electricityBill: number) => void
+}
+
+export function ElectricityBillField({
+  error,
+  disabled = false,
+  onChange,
+}: ElectricityBillFieldProps) {
+  const { control } = useFormContext<SimulationFormData>()
+
+  // 数値をカンマ区切りでフォーマット
+  const formatNumber = (num: number): string => {
+    return num.toLocaleString("ja-JP")
+  }
+
+  // カンマを削除して数値に変換
+  const parseNumber = (str: string): number => {
+    const cleanStr = str.replace(/,/g, "")
+    return cleanStr === "" ? 0 : Number(cleanStr)
+  }
+
+  return (
+    <Controller
+      name="electricityBill"
+      control={control}
+      render={({ field }) => {
+        const displayValue = field.value > 0 ? formatNumber(field.value) : ""
+
+        return (
+          <FieldWrapper name="electricityBill" error={error} disabled={disabled} hideLabel={true}>
+            <div className="flex items-center gap-2">
+              <input
+                id="electricityBill"
+                type="text"
+                value={displayValue}
+                placeholder="10,000"
+                disabled={disabled}
+                className={clsx(
+                  "flex-1 rounded-md border bg-white px-2 sm:px-3 py-2 sm:py-3 text-base sm:text-lg font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2",
+                  error && "border-red-300 bg-red-50 focus:border-red-500",
+                  disabled && !error && "border-gray-200 bg-gray-50 text-gray-400",
+                  !error &&
+                    !disabled &&
+                    "border-gray-300 hover:border-gray-400 focus:border-red-400",
+                )}
+                onChange={(e) => {
+                  const numericValue = parseNumber(e.target.value)
+                  field.onChange(numericValue)
+                  onChange?.(numericValue)
+                }}
+              />
+              <span className="font-medium text-gray-900 text-sm sm:text-base">円</span>
+            </div>
+          </FieldWrapper>
+        )
+      }}
+    />
+  )
+}
