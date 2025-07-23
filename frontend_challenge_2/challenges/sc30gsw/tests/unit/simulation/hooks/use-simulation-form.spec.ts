@@ -16,6 +16,7 @@ const mockHandleSubmit = vi.fn((callback) => {
 })
 
 const mockSetError = vi.fn()
+const mockClearErrors = vi.fn()
 
 vi.mock('~/hooks/use-safe-form', () => ({
   useSafeForm: vi.fn(() => ({
@@ -25,6 +26,7 @@ vi.mock('~/hooks/use-safe-form', () => ({
     reset: mockReset,
     handleSubmit: mockHandleSubmit,
     setError: mockSetError,
+    clearErrors: mockClearErrors,
     formState: { errors: {}, isSubmitting: false },
   })),
 }))
@@ -69,6 +71,7 @@ describe('use-simulation-form', () => {
     vi.clearAllMocks()
     
     mockSetError.mockClear()
+    mockClearErrors.mockClear()
     
     // デフォルトのモック戻り値を設定
     mockWatch.mockReturnValue({
@@ -148,6 +151,24 @@ describe('use-simulation-form', () => {
       
       // カスタムエラーが設定されることを確認
       expect(result.formErrors).toBeDefined()
+    })
+
+    it('有効な郵便番号入力時にエラーがクリアされる', () => {
+      const result = useSimulationForm()
+      
+      result.handlePostalCodeChange('1111111')
+      
+      // React Hook FormのclearErrorsが呼ばれることを確認
+      expect(mockClearErrors).toHaveBeenCalledWith('postalCode')
+    })
+
+    it('関西エリアの郵便番号でエリアが正しく設定される', () => {
+      const result = useSimulationForm()
+      
+      result.handlePostalCodeChange('5123456')
+      
+      expect(mockSetValue).toHaveBeenCalledWith('area', 'kansai')
+      expect(mockClearErrors).toHaveBeenCalledWith('postalCode')
     })
   })
 

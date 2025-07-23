@@ -43,7 +43,6 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
     }
   }, [defaultValues])
 
-  // React Hook Form初期化
   const form = useSafeForm<SimulationFormData>({
     resolver: zodResolver(simulationSchema),
     mode: "onChange",
@@ -57,6 +56,7 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
     getValues,
     setValue,
     handleSubmit,
+    clearErrors,
   } = form
 
   // 現在のフォームデータ
@@ -102,6 +102,8 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
           newErrors.postalCode = areaResult.errorMessage
         } else {
           delete newErrors.postalCode
+          // React Hook Formのエラーもクリア
+          clearErrors("postalCode")
         }
         return newErrors
       })
