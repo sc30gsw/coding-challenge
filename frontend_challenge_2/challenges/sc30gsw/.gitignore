@@ -24,6 +24,9 @@ dist-ssr
 *.sw?
 tsconfig.tsbuildinfo
 
+# Vitest
+/coverage/
+
 # Playwright
 /test-results/
 /playwright-report/
