@@ -1,5 +1,4 @@
 import { clsx } from "clsx"
-import { memo, useCallback } from "react"
 import { Controller, useFormContext } from "react-hook-form"
 import { FieldWrapper } from "~/features/simulation/components/fields/field-wrapper"
 import type { SimulationFormData } from "~/features/simulation/types/schema/simulation-schema"
@@ -10,21 +9,21 @@ type ElectricityBillFieldProps = {
   onChange?: (electricityBill: number) => void
 }
 
-export const ElectricityBillField = memo(function ElectricityBillField({
+export function ElectricityBillField({
   error,
   disabled = false,
   onChange,
 }: ElectricityBillFieldProps) {
   const { control } = useFormContext<SimulationFormData>()
 
-  const formatNumber = useCallback((num: number): string => {
+  const formatNumber = (num: number) => {
     return num.toLocaleString("ja-JP")
-  }, [])
+  }
 
-  const parseNumber = useCallback((str: string): number => {
+  const parseNumber = (str: string) => {
     const cleanStr = str.replace(/,/g, "")
     return cleanStr === "" ? 0 : Number(cleanStr)
-  }, [])
+  }
 
   return (
     <Controller
@@ -64,4 +63,4 @@ export const ElectricityBillField = memo(function ElectricityBillField({
       }}
     />
   )
-})
+}

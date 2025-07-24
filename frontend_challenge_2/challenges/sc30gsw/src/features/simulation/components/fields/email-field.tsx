@@ -1,5 +1,4 @@
 import { clsx } from "clsx"
-import { memo } from "react"
 import { Controller, useFormContext } from "react-hook-form"
 import { FieldWrapper } from "~/features/simulation/components/fields/field-wrapper"
 import type { SimulationFormData } from "~/features/simulation/types/schema/simulation-schema"
@@ -10,11 +9,7 @@ type EmailFieldProps = {
   onChange?: (email: string) => void
 }
 
-export const EmailField = memo(function EmailField({
-  error,
-  disabled = false,
-  onChange,
-}: EmailFieldProps) {
+export function EmailField({ error, disabled = false, onChange }: EmailFieldProps) {
   const { control } = useFormContext<SimulationFormData>()
 
   return (
@@ -45,4 +40,4 @@ export const EmailField = memo(function EmailField({
       )}
     />
   )
-})
+}

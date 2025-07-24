@@ -1,6 +1,6 @@
 import { clsx } from "clsx"
 import type { ComponentProps } from "react"
-import { memo, useCallback, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { Controller, type ControllerRenderProps, useFormContext } from "react-hook-form"
 import { FieldWrapper } from "~/features/simulation/components/fields/field-wrapper"
 import type { SimulationFormData } from "~/features/simulation/types/schema/simulation-schema"
@@ -11,11 +11,7 @@ type PostalCodeFieldProps = {
   onChange?: (postalCode: string) => void
 }
 
-export const PostalCodeField = memo(function PostalCodeField({
-  error,
-  disabled = false,
-  onChange,
-}: PostalCodeFieldProps) {
+export function PostalCodeField({ error, disabled = false, onChange }: PostalCodeFieldProps) {
   const { control } = useFormContext<SimulationFormData>()
 
   const [postalCodeValue, setPostalCodeValue] = useState({
@@ -26,41 +22,35 @@ export const PostalCodeField = memo(function PostalCodeField({
   const firstInputRef = useRef<HTMLInputElement>(null)
   const secondInputRef = useRef<HTMLInputElement>(null)
 
-  const updateFullValue = useCallback(
-    (
-      first: string,
-      second: string,
-      fieldOnChange: ControllerRenderProps<SimulationFormData>["onChange"],
-    ) => {
-      const fullValue = first + second
-      fieldOnChange(fullValue)
-      onChange?.(fullValue)
-    },
-    [onChange],
-  )
+  const updateFullValue = (
+    first: string,
+    second: string,
+    fieldOnChange: ControllerRenderProps<SimulationFormData>["onChange"],
+  ) => {
+    const fullValue = first + second
+    fieldOnChange(fullValue)
+    onChange?.(fullValue)
+  }
 
-  const createInputHandler = useCallback(
-    (
-      fieldType: "first" | "second",
-      maxLength: number,
-      fieldOnChange: ControllerRenderProps<SimulationFormData>["onChange"],
-    ): ComponentProps<"input">["onChange"] => {
-      return (e) => {
-        const value = e.target.value.replace(/\D/g, "")
+  const createInputHandler = (
+    fieldType: "first" | "second",
+    maxLength: number,
+    fieldOnChange: ControllerRenderProps<SimulationFormData>["onChange"],
+  ): ComponentProps<"input">["onChange"] => {
+    return (e) => {
+      const value = e.target.value.replace(/\D/g, "")
 
-        if (value.length <= maxLength) {
-          const newParts = { ...postalCodeValue, [fieldType]: value }
-          setPostalCodeValue(newParts)
-          updateFullValue(newParts.first, newParts.second, fieldOnChange)
+      if (value.length <= maxLength) {
+        const newParts = { ...postalCodeValue, [fieldType]: value }
+        setPostalCodeValue(newParts)
+        updateFullValue(newParts.first, newParts.second, fieldOnChange)
 
-          if (fieldType === "first" && value.length === 3) {
-            secondInputRef.current?.focus()
-          }
+        if (fieldType === "first" && value.length === 3) {
+          secondInputRef.current?.focus()
         }
       }
-    },
-    [postalCodeValue, updateFullValue],
-  )
+    }
+  }
 
   return (
     <Controller
@@ -133,4 +123,4 @@ export const PostalCodeField = memo(function PostalCodeField({
       }}
     />
   )
-})
+}

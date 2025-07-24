@@ -1,6 +1,6 @@
 import { IconAlertTriangleFilled, IconCircleArrowRight, IconLoader } from "@tabler/icons-react"
 import { clsx } from "clsx"
-import { memo, useCallback } from "react"
+import { memo } from "react"
 import { FormProvider } from "react-hook-form"
 import { FieldLabel } from "~/components/ui/field-label"
 import { SectionHeader } from "~/components/ui/section-header"
@@ -42,12 +42,9 @@ export const SimulationForm = memo(function SimulationForm({
   } = form
 
   // フィールドエラーを取得
-  const getFieldError = useCallback(
-    (fieldName: keyof SimulationFormData) => {
-      return customErrors[fieldName] || errors[fieldName]?.message
-    },
-    [customErrors, errors],
-  )
+  const getFieldError = (fieldName: keyof SimulationFormData) => {
+    return customErrors[fieldName] || errors[fieldName]?.message
+  }
 
   return (
     <FormProvider {...form}>
