@@ -264,6 +264,41 @@ test.describe("電気料金シミュレーションフォーム", () => {
     })
   })
 
+  test.describe("フィールドリセット機能", () => {
+    test("郵便番号をサービスエリア対象外に変更時のフィールドリセット", async ({ page }) => {
+      await fillPostalCode(page, "1000001")
+      await selectCompany(page, "東京電力")
+      await selectPlan(page, "従量電灯B")
+      await selectCapacity(page, "30A")
+      await fillElectricityBill(page, "5000")
+      await fillEmail(page, "test@example.com")
+
+      const submitButton = page.getByRole("button", { name: "結果を見る" })
+      await expect(submitButton).toBeEnabled()
+      await fillPostalCode(page, "2000000")
+      await expect(page.getByText("サービスエリア対象外です。")).toBeVisible()
+      await expect(page.getByLabel("電力会社")).toBeDisabled()      
+      await expect(page.getByLabel("プラン")).toBeDisabled()
+      await expect(page.getByLabel("メールアドレス")).toBeDisabled()
+      await expect(submitButton).toBeDisabled()
+    })
+
+    test("電力会社をその他に変更時のフィールドリセット", async ({ page }) => {
+      await fillPostalCode(page, "1000001")
+      await selectCompany(page, "東京電力")
+      await selectPlan(page, "従量電灯B")
+      await selectCapacity(page, "30A")
+      await fillElectricityBill(page, "5000")
+
+      await selectCompany(page, "その他")
+      await expect(page.getByText("シミュレーション対象外です。")).toBeVisible()
+
+      await expect(page.getByLabel("プラン")).toBeDisabled()
+
+      await expect(page.getByLabel("メールアドレス")).toBeDisabled()
+    })
+  })
+
   test.describe("レスポンシブデザイン", () => {
     test("モバイル表示での動作確認", async ({ page, browserName }) => {
       if (browserName === "chromium" || browserName === "webkit") {

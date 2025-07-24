@@ -288,7 +288,7 @@ describe('form-state', () => {
 
       const fieldsToReset = getFieldsToReset(previousData, newData)
       
-      expect(fieldsToReset).toContain('capacity')
+      expect(fieldsToReset).toEqual(['capacity'])
     })
   })
 

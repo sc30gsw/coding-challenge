@@ -26,7 +26,7 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
     const baseDefaults = {
       postalCode: "",
       area: "unsupported",
-      company: "tepco",
+      company: "",
       plan: undefined,
       electricityBill: 0,
       email: "",
@@ -81,17 +81,19 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
 
   const resetFieldsFromIndex = useCallback(
     (fieldNames: Array<keyof SimulationFormData>) => {
-      fieldNames.forEach((fieldName) => {
-        if (fieldName === "area") {
-          return
-        }
+      const defaultValues = {
+        area: "unsupported",
+        company: "",
+        plan: undefined,
+        capacity: null,
+        electricityBill: 0,
+        email: "",
+        postalCode: "",
+      } as const satisfies SimulationFormData
 
-        if (fieldName === "capacity") {
-          setValue("capacity", null)
-        } else {
-          setValue(fieldName, "" as any)
-        }
-      })
+      Object.entries(defaultValues)
+        .filter(([fieldName]) => fieldNames.includes(fieldName as keyof SimulationFormData))
+        .forEach(([fieldName, value]) => setValue(fieldName as keyof SimulationFormData, value))
     },
     [setValue],
   )
@@ -136,11 +138,13 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
     (postalCode: string) => {
       setValue("postalCode", postalCode)
 
+      resetFieldsFromIndex(["area", "company", "plan", "capacity", "electricityBill", "email"])
+
       if (postalCode.length === 7) {
         handleAreaDetection(postalCode)
       }
     },
-    [setValue, handleAreaDetection],
+    [setValue, resetFieldsFromIndex, handleAreaDetection],
   )
 
   const handleCompanyChange = useCallback(

@@ -123,7 +123,7 @@ export const SimulationForm = memo(function SimulationForm({
                 <FieldLabel label="メールアドレス" />
                 <EmailField
                   error={getFieldError("email")}
-                  disabled={!formState.enabledFields.email}
+                  disabled={!formState.enabledFields.email || !!getFieldError("company")}
                 />
               </div>
             </div>

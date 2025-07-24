@@ -108,7 +108,7 @@ describe('use-simulation-form', () => {
     mockWatch.mockReturnValue({
       postalCode: '',
       area: 'unsupported',
-      company: 'tepco',
+      company: '',
       plan: undefined,
       electricityBill: 0,
       email: '',
@@ -118,7 +118,7 @@ describe('use-simulation-form', () => {
     mockGetValues.mockReturnValue({
       postalCode: '',
       area: 'unsupported',
-      company: 'tepco',
+      company: '',
       plan: undefined,
       electricityBill: 0,
       email: '',
@@ -254,20 +254,27 @@ describe('use-simulation-form', () => {
       expect(typeof result.resetFieldsFromIndex).toBe('function')
     })
 
-    it('指定されたフィールドがリセットされる', () => {
+    it('各フィールドが適切なデフォルト値でリセットされる', () => {
       const result = useSimulationForm()
       
-      result.resetFieldsFromIndex(['company', 'plan'])
+      result.resetFieldsFromIndex(['area', 'company', 'plan', 'capacity', 'electricityBill', 'email', 'postalCode'])
       
-      expect(mockSetValue).toHaveBeenCalled()
+      expect(mockSetValue).toHaveBeenCalledWith('area', 'unsupported')
+      expect(mockSetValue).toHaveBeenCalledWith('company', '')
+      expect(mockSetValue).toHaveBeenCalledWith('plan', undefined)
+      expect(mockSetValue).toHaveBeenCalledWith('capacity', null)
+      expect(mockSetValue).toHaveBeenCalledWith('electricityBill', 0)
+      expect(mockSetValue).toHaveBeenCalledWith('email', '')
+      expect(mockSetValue).toHaveBeenCalledWith('postalCode', '')
     })
 
-    it('契約容量フィールドはnullでリセットされる', () => {
+    it('単一フィールドのリセットが正常に動作する', () => {
       const result = useSimulationForm()
       
       result.resetFieldsFromIndex(['capacity'])
       
       expect(mockSetValue).toHaveBeenCalledWith('capacity', null)
+      expect(mockSetValue).toHaveBeenCalledTimes(1)
     })
   })
 

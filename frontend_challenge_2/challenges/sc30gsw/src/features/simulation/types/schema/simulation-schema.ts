@@ -10,7 +10,7 @@ export const areaSchema = z.enum(["tokyo", "kansai", "unsupported"], {
   message: "サービスエリアを選択してください。",
 })
 
-export const companySchema = z.enum(["tepco", "kepco", "other"], {
+export const companySchema = z.enum(["tepco", "kepco", "other", ""], {
   message: "電力会社を選択してください。",
 })
 
