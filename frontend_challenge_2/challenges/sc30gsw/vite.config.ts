@@ -14,5 +14,5 @@ export default defineConfig({
       '~': path.resolve(__dirname, 'src'),
     },
   },
-  base: '/frontend_challenge_2/' 
+  base: process.env.NODE_ENV === 'production' ? '/coding-challenge/' : '/',
 })
