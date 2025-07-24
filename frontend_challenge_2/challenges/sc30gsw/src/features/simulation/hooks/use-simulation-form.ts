@@ -206,7 +206,6 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
     submitHandler()
   }, [handleSubmit, setCustomErrors, onSubmit])
 
-
   return {
     form,
     formData,

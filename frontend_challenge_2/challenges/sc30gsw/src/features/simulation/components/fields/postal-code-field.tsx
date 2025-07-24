@@ -41,9 +41,9 @@ export const PostalCodeField = memo(function PostalCodeField({
 
   const createInputHandler = useCallback(
     (
-      fieldType: "first" | "second", 
+      fieldType: "first" | "second",
       maxLength: number,
-      fieldOnChange: ControllerRenderProps<SimulationFormData>["onChange"]
+      fieldOnChange: ControllerRenderProps<SimulationFormData>["onChange"],
     ): ComponentProps<"input">["onChange"] => {
       return (e) => {
         const value = e.target.value.replace(/\D/g, "")
