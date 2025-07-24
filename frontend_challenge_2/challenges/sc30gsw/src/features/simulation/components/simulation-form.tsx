@@ -1,5 +1,6 @@
 import { IconAlertTriangleFilled, IconCircleArrowRight, IconLoader } from "@tabler/icons-react"
 import { clsx } from "clsx"
+import { memo, useCallback } from "react"
 import { FormProvider } from "react-hook-form"
 import { FieldLabel } from "~/components/ui/field-label"
 import { SectionHeader } from "~/components/ui/section-header"
@@ -18,7 +19,10 @@ type SimulationFormProps = {
   onSubmit?: (data: SimulationFormData) => void | Promise<void>
 }
 
-export function SimulationForm({ defaultValues, onSubmit }: SimulationFormProps) {
+export const SimulationForm = memo(function SimulationForm({
+  defaultValues,
+  onSubmit,
+}: SimulationFormProps) {
   const {
     form,
     formData,
@@ -38,9 +42,12 @@ export function SimulationForm({ defaultValues, onSubmit }: SimulationFormProps)
   } = form
 
   // フィールドエラーを取得
-  const getFieldError = (fieldName: keyof SimulationFormData) => {
-    return customErrors[fieldName] || errors[fieldName]?.message
-  }
+  const getFieldError = useCallback(
+    (fieldName: keyof SimulationFormData) => {
+      return customErrors[fieldName] || errors[fieldName]?.message
+    },
+    [customErrors, errors],
+  )
 
   return (
     <FormProvider {...form}>
@@ -159,4 +166,4 @@ export function SimulationForm({ defaultValues, onSubmit }: SimulationFormProps)
       </div>
     </FormProvider>
   )
-}
+})

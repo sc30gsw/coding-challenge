@@ -79,7 +79,24 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
 
   const canSubmit = useMemo(() => canSubmitForm(formData, formErrors), [formData, formErrors])
 
-  const handlePostalCodeChange = useCallback(
+  const resetFieldsFromIndex = useCallback(
+    (fieldNames: Array<keyof SimulationFormData>) => {
+      fieldNames.forEach((fieldName) => {
+        if (fieldName === "area") {
+          return
+        }
+
+        if (fieldName === "capacity") {
+          setValue("capacity", null)
+        } else {
+          setValue(fieldName, "" as any)
+        }
+      })
+    },
+    [setValue],
+  )
+
+  const handleAreaDetection = useCallback(
     (postalCode: string) => {
       const previousFormData = getValues()
       const areaResult = detectAreaFromPostalCode(postalCode)
@@ -112,12 +129,23 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
         resetFieldsFromIndex(fieldsToReset)
       }
     },
-    [form],
+    [getValues, setValue, setCustomErrors, clearErrors, resetFieldsFromIndex],
+  )
+
+  const handlePostalCodeChange = useCallback(
+    (postalCode: string) => {
+      setValue("postalCode", postalCode)
+
+      if (postalCode.length === 7) {
+        handleAreaDetection(postalCode)
+      }
+    },
+    [setValue, handleAreaDetection],
   )
 
   const handleCompanyChange = useCallback(
     (company: SimulationFormData["company"]) => {
-      const previousFormData = form.getValues()
+      const previousFormData = getValues()
 
       // "その他"が選択された場合のエラーメッセージ
       setCustomErrors((prev) => {
@@ -136,7 +164,7 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
         resetFieldsFromIndex(fieldsToReset)
       }
     },
-    [form],
+    [getValues, setCustomErrors, resetFieldsFromIndex],
   )
 
   const handlePlanChange = useCallback(
@@ -149,30 +177,13 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
         resetFieldsFromIndex(fieldsToReset)
       }
     },
-    [form],
-  )
-
-  const resetFieldsFromIndex = useCallback(
-    (fieldNames: Array<keyof SimulationFormData>) => {
-      fieldNames.forEach((fieldName) => {
-        if (fieldName === "area") {
-          return
-        }
-
-        if (fieldName === "capacity") {
-          setValue("capacity", null)
-        } else {
-          setValue(fieldName, "" as any)
-        }
-      })
-    },
-    [form],
+    [getValues, resetFieldsFromIndex],
   )
 
   const resetForm = useCallback(() => {
     reset()
     setCustomErrors({})
-  }, [form])
+  }, [reset, setCustomErrors])
 
   const submit = useCallback(() => {
     const submitHandler = handleSubmit(async (data) => {
@@ -193,7 +204,8 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
     })
 
     submitHandler()
-  }, [form, onSubmit])
+  }, [handleSubmit, setCustomErrors, onSubmit])
+
 
   return {
     form,

@@ -1,5 +1,6 @@
 import { IconChevronDown } from "@tabler/icons-react"
 import clsx from "clsx"
+import { memo, useMemo } from "react"
 import { Controller, useFormContext } from "react-hook-form"
 import Select, { type SingleValue } from "react-select"
 import { FieldWrapper } from "~/features/simulation/components/fields/field-wrapper"
@@ -19,7 +20,7 @@ type CompanySelectFieldProps = {
   onChange?: (company: SimulationFormData["company"]) => void
 }
 
-export function CompanySelectField({
+export const CompanySelectField = memo(function CompanySelectField({
   error,
   disabled = false,
   area,
@@ -27,16 +28,25 @@ export function CompanySelectField({
 }: CompanySelectFieldProps) {
   const { control } = useFormContext<SimulationFormData>()
 
-  const availableCompanies = ELECTRICITY_COMPANIES.filter(
-    (company) => company.area === area || company.code === "other",
+  const availableCompanies = useMemo(
+    () =>
+      ELECTRICITY_COMPANIES.filter((company) => company.area === area || company.code === "other"),
+    [area],
   )
 
-  const companyOptions = availableCompanies.map((company) => ({
-    value: company.code,
-    label: company.name,
-  })) satisfies CompanyOption[]
+  const companyOptions = useMemo(
+    () =>
+      availableCompanies.map((company) => ({
+        value: company.code,
+        label: company.name,
+      })) satisfies CompanyOption[],
+    [availableCompanies],
+  )
 
-  const customStyles = createSelectStyles<CompanyOption>({ error, disabled })
+  const customStyles = useMemo(
+    () => createSelectStyles<CompanyOption>({ error, disabled }),
+    [error, disabled],
+  )
 
   return (
     <Controller
@@ -77,4 +87,4 @@ export function CompanySelectField({
       }}
     />
   )
-}
+})

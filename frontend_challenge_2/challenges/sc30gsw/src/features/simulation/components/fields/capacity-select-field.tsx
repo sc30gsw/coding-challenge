@@ -1,5 +1,6 @@
 import { IconChevronDown } from "@tabler/icons-react"
 import clsx from "clsx"
+import { memo, useMemo } from "react"
 import { Controller, useFormContext } from "react-hook-form"
 import Select, { type SingleValue } from "react-select"
 import { FieldWrapper } from "~/features/simulation/components/fields/field-wrapper"
@@ -21,7 +22,7 @@ type CapacitySelectFieldProps = {
   onChange?: (capacity: SimulationFormData["capacity"]) => void
 }
 
-export function CapacitySelectField({
+export const CapacitySelectField = memo(function CapacitySelectField({
   error,
   disabled = false,
   company,
@@ -30,16 +31,27 @@ export function CapacitySelectField({
 }: CapacitySelectFieldProps) {
   const { control } = useFormContext<SimulationFormData>()
 
-  const capacityResult =
-    company && plan ? generateCapacityOptions(company, plan) : { options: [], isRequired: false }
-  const capacityOptions = capacityResult.options
+  const capacityResult = useMemo(
+    () =>
+      company && plan ? generateCapacityOptions(company, plan) : { options: [], isRequired: false },
+    [company, plan],
+  )
 
-  const selectOptions = capacityOptions.map((option: CapacityOption) => ({
-    value: option.value,
-    label: option.label,
-  })) satisfies SelectCapacityOption[]
+  const capacityOptions = useMemo(() => capacityResult.options, [capacityResult.options])
 
-  const customStyles = createSelectStyles<SelectCapacityOption>({ error, disabled })
+  const selectOptions = useMemo(
+    () =>
+      capacityOptions.map((option: CapacityOption) => ({
+        value: option.value,
+        label: option.label,
+      })) satisfies SelectCapacityOption[],
+    [capacityOptions],
+  )
+
+  const customStyles = useMemo(
+    () => createSelectStyles<SelectCapacityOption>({ error, disabled }),
+    [error, disabled],
+  )
 
   return (
     <Controller
@@ -87,4 +99,4 @@ export function CapacitySelectField({
       }}
     />
   )
-}
+})

@@ -1,5 +1,6 @@
 import { IconAlertTriangleFilled } from "@tabler/icons-react"
 import type { ReactNode } from "react"
+import { memo } from "react"
 
 type FieldWrapperProps = {
   label?: string
@@ -12,7 +13,7 @@ type FieldWrapperProps = {
   hideLabel?: boolean
 }
 
-export function FieldWrapper({
+export const FieldWrapper = memo(function FieldWrapper({
   label,
   name,
   error,
@@ -50,4 +51,4 @@ export function FieldWrapper({
       )}
     </div>
   )
-}
+})

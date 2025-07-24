@@ -1,5 +1,6 @@
 import { IconChevronDown } from "@tabler/icons-react"
 import { clsx } from "clsx"
+import { memo, useMemo } from "react"
 import { Controller, useFormContext } from "react-hook-form"
 import Select, { type SingleValue } from "react-select"
 import { FieldWrapper } from "~/features/simulation/components/fields/field-wrapper"
@@ -19,7 +20,7 @@ type PlanSelectFieldProps = {
   onChange?: (plan: SimulationFormData["plan"]) => void
 }
 
-export function PlanSelectField({
+export const PlanSelectField = memo(function PlanSelectField({
   error,
   disabled = false,
   company,
@@ -27,13 +28,21 @@ export function PlanSelectField({
 }: PlanSelectFieldProps) {
   const { control } = useFormContext<SimulationFormData>()
 
-  const selectedCompany = ELECTRICITY_COMPANIES.find((c) => c.code === company)
-  const availablePlans = selectedCompany?.supportedPlans || []
+  const selectedCompany = useMemo(
+    () => ELECTRICITY_COMPANIES.find((c) => c.code === company),
+    [company],
+  )
 
-  const planOptions = availablePlans.map((plan) => ({
-    value: plan.code,
-    label: plan.name,
-  })) satisfies readonly PlanOption[]
+  const availablePlans = useMemo(() => selectedCompany?.supportedPlans || [], [selectedCompany])
+
+  const planOptions = useMemo(
+    () =>
+      availablePlans.map((plan) => ({
+        value: plan.code,
+        label: plan.name,
+      })) satisfies readonly PlanOption[],
+    [availablePlans],
+  )
 
   const getSelectedPlanDescription = (planCode: SimulationFormData["plan"]) => {
     const plan = availablePlans.find((p) => p.code === planCode)
@@ -113,4 +122,4 @@ export function PlanSelectField({
       }}
     />
   )
-}
+})

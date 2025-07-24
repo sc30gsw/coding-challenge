@@ -6,7 +6,7 @@ import type { ElectricityArea } from "~/features/simulation/types"
  * @param postalCode 7桁の郵便番号文字列
  * @returns エリア判定結果
  */
-export function detectAreaFromPostalCode(postalCode: string) {
+export function detectAreaFromPostalCode(postalCode?: string) {
   if (!postalCode || postalCode.length !== 7) {
     return {
       area: "unsupported",
