@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [feature/sc30gsw-main]
+    branches: [master]
   pull_request:
-    branches: [feature/sc30gsw-main]
+    branches: [master]
 
 jobs:
   test:
