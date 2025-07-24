@@ -32,40 +32,40 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('challenges/sc30gsw/bun.lockb') }}
+          key: ${{ runner.os }}-bun-${{ hashFiles('frontend_challenge_2/challenges/sc30gsw/bun.lockb') }}
           restore-keys: |
             ${{ runner.os }}-bun-
 
       - name: Install dependencies
         run: bun install
-        working-directory: ./challenges/sc30gsw
+        working-directory: ./frontend_challenge_2/challenges/sc30gsw
 
       - name: Code quality check (Biome)
         run: bun run check
-        working-directory: ./challenges/sc30gsw
+        working-directory: ./frontend_challenge_2/challenges/sc30gsw
 
       - name: TypeScript type check
         run: bunx tsc --noEmit
-        working-directory: ./challenges/sc30gsw
+        working-directory: ./frontend_challenge_2/challenges/sc30gsw
 
       - name: Run unit tests
         run: bun run test:unit
-        working-directory: ./challenges/sc30gsw
+        working-directory: ./frontend_challenge_2/challenges/sc30gsw
 
       - name: Install Playwright browsers
         run: bunx playwright install --with-deps
-        working-directory: ./challenges/sc30gsw
+        working-directory: ./frontend_challenge_2/challenges/sc30gsw
 
       - name: Run E2E tests
         run: bun run test:e2e
-        working-directory: ./challenges/sc30gsw
+        working-directory: ./frontend_challenge_2/challenges/sc30gsw
 
       - name: Build for GitHub Pages
         run: bun run build:clean
         env:
           NODE_ENV: production
           GITHUB_PAGES: true
-        working-directory: ./challenges/sc30gsw
+        working-directory: ./frontend_challenge_2/challenges/sc30gsw
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -73,7 +73,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './challenges/sc30gsw/dist'
+          path: './frontend_challenge_2/challenges/sc30gsw/dist'
 
   deploy:
     name: Deploy
