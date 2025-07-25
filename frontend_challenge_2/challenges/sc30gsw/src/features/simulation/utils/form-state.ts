@@ -208,57 +208,9 @@ export function analyzeFormState(formData: PartialSimulationFormData) {
   }
 }
 
-/**
- * フォームステップの情報を更新する
- * @param formData 現在のフォームデータ
- * @returns 更新されたステップ情報
- */
-export function updateFormSteps(formData: PartialSimulationFormData) {
-  const state = analyzeFormState(formData)
 
-  return FORM_STEPS.map((step) => ({
-    ...step,
-    completed: state.completedSteps[step.id] || false,
-    enabled:
-      step.id === "postal-code" || state.completedSteps[step.id] || state.currentStep === step.id,
-    hasError: false, // エラー状態は別途管理
-  }))
-}
 
-/**
- * 次に入力すべきフィールドを取得する
- * @param formData 現在のフォームデータ
- * @returns 次に入力すべきフィールド名
- */
-export function getNextRequiredField(formData: PartialSimulationFormData) {
-  return analyzeFormState(formData).nextRequiredField
-}
 
-/**
- * フォームの完了率を計算する
- * @param formData 現在のフォームデータ
- * @returns 完了率（0-100%）
- */
-export function calculateFormCompletionRate(formData: PartialSimulationFormData) {
-  const state = analyzeFormState(formData)
-  const totalSteps = FORM_STEPS.length
-  const completedSteps = Object.values(state.completedSteps).filter(Boolean).length
-
-  return Math.round((completedSteps / totalSteps) * 100)
-}
-
-/**
- * フィールドが現在有効かどうかを判定する
- * @param fieldName フィールド名
- * @param formData 現在のフォームデータ
- * @returns フィールドが有効かのboolean
- */
-export function isFieldEnabled(
-  fieldName: keyof SimulationFormData,
-  formData: PartialSimulationFormData,
-) {
-  return analyzeFormState(formData).enabledFields[fieldName]
-}
 
 const FIELD_RESET_MAP = {
   postalCode: ["area", "company", "plan", "capacity"],
@@ -306,7 +258,15 @@ export function updateFormStepsWithErrors(
   formData: PartialSimulationFormData,
   errors: Record<string, string>,
 ) {
-  const steps = updateFormSteps(formData)
+  const state = analyzeFormState(formData)
+
+  const steps = FORM_STEPS.map((step) => ({
+    ...step,
+    completed: state.completedSteps[step.id] || false,
+    enabled:
+      step.id === "postal-code" || state.completedSteps[step.id] || state.currentStep === step.id,
+    hasError: false, // エラー状態は別途管理
+  }))
 
   // エラーがあるフィールドに対応するステップにエラーフラグを設定
   const fieldToStepMap: Record<keyof SimulationFormData, string> = {
@@ -338,49 +298,4 @@ export function canSubmitForm(formData: PartialSimulationFormData, errors: Recor
   const hasNoErrors = Object.keys(errors).length === 0
 
   return state.isFormComplete && hasNoErrors
-}
-
-/**
- * フィールド値が有効かどうかを判定する
- */
-function isValidFieldValue(
-  field: keyof SimulationFormData,
-  value: SimulationFormData[typeof field],
-): boolean {
-  if (value === null || value === undefined || value === "") {
-    return false
-  }
-
-  if (field === "electricityBill") {
-    return typeof value === "number" && value >= 1000
-  }
-
-  return true
-}
-
-/**
- * フォームの自動保存が必要かどうかを判定する
- * @param previousData 前回のデータ
- * @param currentData 現在のデータ
- * @returns 自動保存が必要かのboolean
- */
-export function shouldAutoSave(
-  previousData: PartialSimulationFormData,
-  currentData: PartialSimulationFormData,
-) {
-  const significantFields = [
-    "postalCode",
-    "company",
-    "plan",
-    "capacity",
-    "electricityBill",
-    "email",
-  ] as const satisfies Readonly<Array<keyof SimulationFormData>>
-
-  return significantFields.some((field) => {
-    const prevValue = previousData[field]
-    const currentValue = currentData[field]
-
-    return isValidFieldValue(field, currentValue) && prevValue !== currentValue
-  })
 }

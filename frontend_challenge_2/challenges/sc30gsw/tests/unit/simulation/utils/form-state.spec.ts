@@ -2,13 +2,8 @@ import { describe, expect, it } from 'vitest'
 import type { PartialSimulationFormData } from '~/features/simulation/types/schema/simulation-schema'
 import {
   analyzeFormState,
-  calculateFormCompletionRate,
   canSubmitForm,
   getFieldsToReset,
-  getNextRequiredField,
-  isFieldEnabled,
-  shouldAutoSave,
-  updateFormSteps,
   updateFormStepsWithErrors,
 } from '~/features/simulation/utils/form-state'
 
@@ -109,118 +104,6 @@ describe('form-state', () => {
       expect(result.isFormComplete).toBe(true)
       expect(result.currentStep).toBeNull()
       expect(result.nextRequiredField).toBeNull()
-    })
-  })
-
-  describe('updateFormSteps', () => {
-    it('初期状態では郵便番号ステップのみ有効', () => {
-      const formData: PartialSimulationFormData = {}
-      const steps = updateFormSteps(formData)
-      
-      const postalCodeStep = steps.find(step => step.id === 'postal-code')
-      const companyStep = steps.find(step => step.id === 'company')
-      
-      expect(postalCodeStep?.enabled).toBe(true)
-      expect(postalCodeStep?.completed).toBe(false)
-      expect(companyStep?.enabled).toBe(false)
-    })
-
-    it('郵便番号完了後は電力会社ステップが有効', () => {
-      const formData = {
-        postalCode: '1234567',
-      } as const satisfies PartialSimulationFormData
-      const steps = updateFormSteps(formData)
-      
-      const postalCodeStep = steps.find(step => step.id === 'postal-code')
-      const companyStep = steps.find(step => step.id === 'company')
-      
-      expect(postalCodeStep?.completed).toBe(true)
-      expect(companyStep?.enabled).toBe(true)
-    })
-  })
-
-  describe('getNextRequiredField', () => {
-    it('初期状態では郵便番号が次の必須フィールド', () => {
-      const formData: PartialSimulationFormData = {}
-      const nextField = getNextRequiredField(formData)
-      
-      expect(nextField).toBe('postalCode')
-    })
-
-    it('郵便番号入力後は電力会社が次の必須フィールド', () => {
-      const formData = {
-        postalCode: '1234567',
-      } as const satisfies PartialSimulationFormData
-      const nextField = getNextRequiredField(formData)
-      
-      expect(nextField).toBe('company')
-    })
-
-    it('全項目完了時はnull', () => {
-      const formData = {
-        postalCode: '1234567',
-        company: 'tepco',
-        plan: 'juryoB',
-        capacity: '30A',
-        electricityBill: 5000,
-        email: 'test@example.com',
-      } as const satisfies PartialSimulationFormData
-      const nextField = getNextRequiredField(formData)
-      
-      expect(nextField).toBeNull()
-    })
-  })
-
-  describe('calculateFormCompletionRate', () => {
-    it('初期状態では0%', () => {
-      const formData: PartialSimulationFormData = {}
-      const rate = calculateFormCompletionRate(formData)
-      
-      expect(rate).toBe(0)
-    })
-
-    it('郵便番号のみ完了時は適切な進捗率', () => {
-      const formData = {
-        postalCode: '1234567',
-      } as const satisfies PartialSimulationFormData
-      const rate = calculateFormCompletionRate(formData)
-      
-      expect(rate).toBeGreaterThan(0)
-      expect(rate).toBeLessThan(100)
-    })
-
-    it('全項目完了時は100%', () => {
-      const formData = {
-        postalCode: '1234567',
-        company: 'tepco',
-        plan: 'juryoB',
-        capacity: '30A',
-        electricityBill: 5000,
-        email: 'test@example.com',
-      
-    } as const satisfies PartialSimulationFormData
-      const rate = calculateFormCompletionRate(formData)
-      
-      expect(rate).toBe(100)
-    })
-  })
-
-  describe('isFieldEnabled', () => {
-    it('初期状態では郵便番号のみ有効', () => {
-      const formData: PartialSimulationFormData = {}
-      
-      expect(isFieldEnabled('postalCode', formData)).toBe(true)
-      expect(isFieldEnabled('company', formData)).toBe(false)
-      expect(isFieldEnabled('plan', formData)).toBe(false)
-    })
-
-    it('郵便番号入力後は電力会社が有効', () => {
-      const formData = {
-        postalCode: '1234567',
-      } as const satisfies PartialSimulationFormData
-
-      expect(isFieldEnabled('company', formData)).toBe(true)
-      expect(isFieldEnabled('plan', formData)).toBe(false)
     })
   })
 
@@ -362,76 +245,6 @@ describe('form-state', () => {
       }
       
       const result = canSubmitForm(formData, errors)
-      
-      expect(result).toBe(false)
-    })
-  })
-
-  describe('shouldAutoSave', () => {
-    it('有効な値が変更された場合true', () => {
-      const previousData = {
-        postalCode: '1234567',
-      } as const satisfies PartialSimulationFormData
-      const currentData = {
-        postalCode: '1234567',
-        company: 'tepco',
-      } as const satisfies PartialSimulationFormData
-
-      const result = shouldAutoSave(previousData, currentData)
-      
-      expect(result).toBe(true)
-    })
-
-    it('無効な値（空文字など）の変更ではfalse', () => {
-      const previousData = {
-        postalCode: '1234567',
-      } as const satisfies PartialSimulationFormData
-      const currentData = {
-        postalCode: '1234567',
-      } as const satisfies PartialSimulationFormData
-      
-      const result = shouldAutoSave(previousData, currentData)
-      
-      expect(result).toBe(false)
-    })
-
-    it('電気代が1000円未満の場合false', () => {
-      const previousData = {
-        electricityBill: 2000,
-      } as const satisfies PartialSimulationFormData
-      const currentData = {
-        electricityBill: 500,
-      } as const satisfies PartialSimulationFormData
-      
-      const result = shouldAutoSave(previousData, currentData)
-      
-      expect(result).toBe(false)
-    })
-
-    it('電気代が1000円以上の場合true', () => {
-      const previousData = {
-        electricityBill: 2000,
-      } as const satisfies PartialSimulationFormData
-      const currentData = {
-        electricityBill: 3000,
-      } as const satisfies PartialSimulationFormData
-      
-      const result = shouldAutoSave(previousData, currentData)
-      
-      expect(result).toBe(true)
-    })
-
-    it('値が変更されていない場合false', () => {
-      const previousData = {
-        postalCode: '1234567',
-        company: 'tepco',
-      } as const satisfies PartialSimulationFormData
-      const currentData = {
-        postalCode: '1234567',
-        company: 'tepco',
-      } as const satisfies PartialSimulationFormData
-
-      const result = shouldAutoSave(previousData, currentData)
       
       expect(result).toBe(false)
     })
