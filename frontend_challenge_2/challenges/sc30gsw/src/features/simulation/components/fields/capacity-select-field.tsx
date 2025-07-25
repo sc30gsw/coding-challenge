@@ -4,13 +4,13 @@ import { useMemo } from "react"
 import { Controller, useFormContext } from "react-hook-form"
 import Select, { type SingleValue } from "react-select"
 import { FieldWrapper } from "~/features/simulation/components/fields/field-wrapper"
+import { FIELD_NAMES } from "~/features/simulation/constants/field-definitions"
 import type { SimulationFormData } from "~/features/simulation/types/schema/simulation-schema"
-import type { CapacityOption } from "~/features/simulation/types/simulation"
 import { generateCapacityOptions } from "~/features/simulation/utils/capacity-options"
 import { createSelectStyles } from "~/features/simulation/utils/select-styles"
 
 type SelectCapacityOption = {
-  value: string | number
+  value: number
   label: string
 }
 
@@ -39,7 +39,7 @@ export function CapacitySelectField({
 
   const capacityOptions = capacityResult.options
 
-  const selectOptions = capacityOptions.map((option: CapacityOption) => ({
+  const selectOptions = capacityOptions.map((option) => ({
     value: option.value,
     label: option.label,
   })) satisfies SelectCapacityOption[]
@@ -48,14 +48,18 @@ export function CapacitySelectField({
 
   return (
     <Controller
-      name="capacity"
+      name={FIELD_NAMES.CAPACITY}
       control={control}
       render={({ field }) => {
-        const selectedOption =
-          selectOptions.find((option) => String(option.value) === String(field.value ?? "")) || null
+        const selectedOption = selectOptions.find((option) => option.value === field.value) || null
 
         return (
-          <FieldWrapper name="capacity" error={error} disabled={disabled} hideLabel={true}>
+          <FieldWrapper
+            name={FIELD_NAMES.CAPACITY}
+            error={error}
+            disabled={disabled}
+            hideLabel={true}
+          >
             <div className="relative">
               <div className="-translate-y-1/2 pointer-events-none absolute top-1/2 left-2 z-10 transform sm:left-3">
                 <IconChevronDown stroke={3} size={24} className="text-red-400" />
@@ -64,13 +68,7 @@ export function CapacitySelectField({
                 <Select<SelectCapacityOption, false>
                   value={selectedOption}
                   onChange={(newValue: SingleValue<SelectCapacityOption>) => {
-                    const value = newValue?.value
-                    const capacityValue =
-                      value === undefined || value === ""
-                        ? null
-                        : ((Number.isNaN(Number(value))
-                            ? value
-                            : Number(value)) as SimulationFormData["capacity"])
+                    const capacityValue = newValue?.value ?? null
                     field.onChange(capacityValue)
                     onChange?.(capacityValue)
                   }}
