@@ -1,2 +1,2 @@
-cd frontend_challenge_2/challenges/sc30gsw
+cd "$(dirname "$0")/.."
 bun run build:clean

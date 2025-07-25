@@ -1,3 +1,2 @@
-cd frontend_challenge_2/challenges/sc30gsw
+cd "$(dirname "$0")/.."
 bunx lint-staged
-bunx tsc --noEmit

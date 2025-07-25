@@ -53,7 +53,8 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
-      "bun run check"
+      "bun run check",
+      "bunx tsc --noEmit"
     ]
   }
 }
