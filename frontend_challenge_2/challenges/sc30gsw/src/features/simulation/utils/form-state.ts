@@ -262,7 +262,17 @@ export function updateFormStepsWithErrors(
 ) {
   const state = analyzeFormState(formData)
 
-  const steps = FORM_STEPS.map((step) => ({
+  // 契約容量が不要な場合、容量ステップを非表示にする
+  const shouldShowCapacityStep =
+    formData.company && formData.plan ? isCapacityRequired(formData.company, formData.plan) : true
+
+  const steps = FORM_STEPS.filter((step) => {
+    // 契約容量ステップを条件に応じてフィルタリング
+    if (step.id === STEP_IDS.CAPACITY && !shouldShowCapacityStep) {
+      return false
+    }
+    return true
+  }).map((step) => ({
     ...step,
     completed: state.completedSteps[step.id] || false,
     enabled:

@@ -249,4 +249,52 @@ describe('form-state', () => {
       expect(result).toBe(false)
     })
   })
+
+  describe('updateFormStepsWithErrors', () => {
+    it('契約容量不要プランの場合、容量ステップが非表示になる', () => {
+      const formData = {
+        postalCode: '5234567',
+        company: 'kepco',
+        plan: 'juryoA',
+      } as const satisfies PartialSimulationFormData
+      const errors = {}
+
+      const result = updateFormStepsWithErrors(formData, errors)
+      
+      const capacityStep = result.find(step => step.id === 'capacity')
+      expect(capacityStep).toBeUndefined()
+      
+      expect(result.find(step => step.id === 'postal-code')).toBeDefined()
+      expect(result.find(step => step.id === 'company')).toBeDefined()
+      expect(result.find(step => step.id === 'plan')).toBeDefined()
+      expect(result.find(step => step.id === 'electricity-bill')).toBeDefined()
+      expect(result.find(step => step.id === 'email')).toBeDefined()
+    })
+
+    it('契約容量必要プランの場合、容量ステップが表示される', () => {
+      const formData = {
+        postalCode: '1234567',
+        company: 'tepco',
+        plan: 'juryoB',
+      } as const satisfies PartialSimulationFormData
+      const errors = {}
+
+      const result = updateFormStepsWithErrors(formData, errors)
+      
+      const capacityStep = result.find(step => step.id === 'capacity')
+      expect(capacityStep).toBeDefined()
+    })
+
+    it('会社やプランが未選択の場合、容量ステップが表示される', () => {
+      const formData = {
+        postalCode: '1234567',
+      } as const satisfies PartialSimulationFormData
+      const errors = {}
+
+      const result = updateFormStepsWithErrors(formData, errors)
+      
+      const capacityStep = result.find(step => step.id === 'capacity')
+      expect(capacityStep).toBeDefined()
+    })
+  })
 })
