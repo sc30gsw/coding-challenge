@@ -44,7 +44,7 @@ function processPostalCodeStep(formData: PartialSimulationFormData, state: FormS
   }
 
   state.enabledFields.company = true
-  if (!state.currentStep) {
+  if (!state.currentStep || state.currentStep === STEP_IDS.POSTAL_CODE) {
     state.currentStep = STEP_IDS.COMPANY
   }
 }

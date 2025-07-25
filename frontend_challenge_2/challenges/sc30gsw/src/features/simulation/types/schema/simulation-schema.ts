@@ -1,7 +1,6 @@
 import { z } from "zod"
 import {
   AMPERE_VALUES,
-  AREA_CODES,
   AREAS,
   COMPANIES,
   COMPANY_CODES,
@@ -10,15 +9,14 @@ import {
 } from "~/features/simulation/constants/company-codes"
 import { VALIDATION_TEXTS } from "~/features/simulation/constants/field-definitions"
 import {
-  KANSAI_AREA_FIRST_DIGIT,
   MAX_CAPACITY,
   MIN_CAPACITY,
   MIN_ELECTRICITY_BILL,
   MIN_EMAIL_LENGTH,
   POSTAL_CODE_LENGTH,
   POSTAL_CODE_REGEX,
-  TOKYO_AREA_FIRST_DIGIT,
 } from "~/features/simulation/constants/validation"
+import { detectAreaFromPostalCode } from "~/features/simulation/utils/area-detection"
 
 export const postalCodeSchema = z
   .string()
@@ -121,20 +119,9 @@ export type PartialSimulationFormData = Partial<SimulationFormData>
 export const customValidations = {
   // 郵便番号に基づくエリア判定
   validatePostalCodeArea: (postalCode: string) => {
-    if (!postalCode || postalCode.length !== POSTAL_CODE_LENGTH) {
-      return AREA_CODES.UNSUPPORTED
-    }
+    const result = detectAreaFromPostalCode(postalCode)
 
-    const firstDigit = postalCode.charAt(0)
-    if (firstDigit === TOKYO_AREA_FIRST_DIGIT) {
-      return AREA_CODES.TOKYO
-    }
-
-    if (firstDigit === KANSAI_AREA_FIRST_DIGIT) {
-      return AREA_CODES.KANSAI
-    }
-
-    return AREA_CODES.UNSUPPORTED
+    return result.area
   },
 
   // 電力会社とプランの組み合わせチェック
