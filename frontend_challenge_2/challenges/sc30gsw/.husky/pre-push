@@ -1,0 +1,2 @@
+cd frontend_challenge_2/challenges/sc30gsw
+bun run build:clean

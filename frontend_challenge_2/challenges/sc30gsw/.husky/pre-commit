@@ -1,0 +1,3 @@
+cd frontend_challenge_2/challenges/sc30gsw
+bunx lint-staged
+bunx tsc --noEmit
