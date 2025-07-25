@@ -60,11 +60,15 @@ export function PostalCodeField({ error, disabled = false, onChange }: PostalCod
       render={({ field }) => {
         const currentFullValue = postalCodeValue.first + postalCodeValue.second
 
-        if (field.value !== currentFullValue && field.value) {
-          const newFirst = field.value.slice(0, 3)
-          const newSecond = field.value.slice(3, 7)
-
-          setPostalCodeValue({ first: newFirst, second: newSecond })
+        if (field.value !== currentFullValue) {
+          if (field.value) {
+            const newFirst = field.value.slice(0, 3)
+            const newSecond = field.value.slice(3, 7)
+            setPostalCodeValue({ first: newFirst, second: newSecond })
+          } else {
+            // フィールドが空の場合（リセット時など）はローカル状態もクリア
+            setPostalCodeValue({ first: "", second: "" })
+          }
         }
 
         const handleFirstInputChange = createInputHandler("first", 3, field.onChange)

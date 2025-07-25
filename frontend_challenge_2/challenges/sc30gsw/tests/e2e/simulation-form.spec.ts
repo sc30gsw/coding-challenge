@@ -360,6 +360,37 @@ test.describe("電気料金シミュレーションフォーム", () => {
 
       await expect(page.getByLabel("メールアドレス")).toBeDisabled()
     })
+
+    test("リセットボタンでフォーム全体が完全にクリアされる", async ({ page }) => {
+      await fillPostalCode(page, "1000001")
+      await selectCompany(page, "東京電力")
+      await selectPlan(page, "従量電灯B")
+      await selectCapacity(page, "30A")
+      await fillElectricityBill(page, "5000")
+      await fillEmail(page, "test@example.com")
+
+      const submitButton = page.getByRole("button", { name: "結果を見る" })
+      await expect(submitButton).toBeEnabled()
+
+      const resetButton = page.getByRole("button", { name: "リセット" })
+      await resetButton.click()
+
+      const postalCodeFirst = page.getByLabel("電気を使用する場所の郵便番号").first()
+      const postalCodeSecond = page.getByLabel("電気を使用する場所の郵便番号（後半）")
+      await expect(postalCodeFirst).toHaveValue("")
+      await expect(postalCodeSecond).toHaveValue("")
+
+      await expect(page.getByLabel("電力会社")).toBeDisabled()
+      await expect(page.getByLabel("プラン")).toBeDisabled()
+      await expect(page.getByLabel("契約容量")).not.toBeVisible()
+      await expect(page.getByLabel("先月の電気代は？")).toBeDisabled()
+      await expect(page.getByLabel("メールアドレス")).toBeDisabled()
+
+      await expect(submitButton).toBeDisabled()
+
+      await expect(page.getByText("サービスエリア対象外です。")).not.toBeVisible()
+      await expect(page.getByText("シミュレーション対象外です。")).not.toBeVisible()
+    })
   })
 
   test.describe("レスポンシブデザイン", () => {
