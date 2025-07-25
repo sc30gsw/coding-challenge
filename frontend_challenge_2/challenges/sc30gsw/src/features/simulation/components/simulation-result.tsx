@@ -31,7 +31,7 @@ export function SimulationResult({ data, onBack }: SimulationResultProps) {
           <button
             type="button"
             onClick={onBack}
-            className="flex items-center gap-2 rounded-md px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-800"
+            className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-800"
           >
             <IconArrowLeft size={16} />
             <span className="font-medium text-sm">戻る</span>
@@ -140,13 +140,13 @@ export function SimulationResult({ data, onBack }: SimulationResultProps) {
           <button
             type="button"
             onClick={onBack}
-            className="rounded-lg border border-gray-300 px-6 py-3 font-medium text-gray-700 transition-colors hover:bg-gray-50"
+            className="cursor-pointer rounded-lg border border-gray-300 px-6 py-3 font-medium text-gray-700 transition-colors hover:bg-gray-50"
           >
             再計算する
           </button>
           <button
             type="button"
-            className="rounded-lg bg-red-500 px-6 py-3 font-medium text-white transition-colors hover:bg-red-600"
+            className="cursor-pointer rounded-lg bg-red-500 px-6 py-3 font-medium text-white transition-colors hover:bg-red-600"
           >
             お問い合わせ
           </button>

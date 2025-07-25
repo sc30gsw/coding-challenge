@@ -18,7 +18,7 @@ export function App() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-dvh bg-gray-50">
       {currentPage === "form" && (
         <>
           <div className="bg-white py-8 text-center">
@@ -35,7 +35,7 @@ export function App() {
           </div>
 
           {/* フォームセクション */}
-          <div className="px-4 pb-8">
+          <div className="px-4 py-8">
             <ErrorBoundary>
               <SimulationForm onSubmit={handleFormSubmit} />
             </ErrorBoundary>
