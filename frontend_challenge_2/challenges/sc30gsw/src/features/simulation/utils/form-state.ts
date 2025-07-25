@@ -1,9 +1,9 @@
 import { FORM_STEPS } from "~/features/simulation/constants"
-import type { FormStep } from "~/features/simulation/types"
 import type {
   PartialSimulationFormData,
   SimulationFormData,
 } from "~/features/simulation/types/schema/simulation-schema"
+import type { FormStep } from "~/features/simulation/types/simulation"
 import { detectAreaFromPostalCode } from "~/features/simulation/utils/area-detection"
 import { isCapacityRequired } from "~/features/simulation/utils/capacity-options"
 
@@ -207,10 +207,6 @@ export function analyzeFormState(formData: PartialSimulationFormData) {
     isFormComplete,
   }
 }
-
-
-
-
 
 const FIELD_RESET_MAP = {
   postalCode: ["area", "company", "plan", "capacity"],

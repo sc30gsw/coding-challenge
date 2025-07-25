@@ -46,21 +46,21 @@ bun run preview
 │   │       ├── error-boundary.tsx   # エラーバウンダリコンポーネント
 │   │       └── ***                  # その他の共通コンポーネント
 │   ├── features/                    # ドメイン別の機能実装
-│   │   └── users/                   # ユーザー関連機能の親ディレクトリ
+│   │   └── simulations/             # 電気シュミレーション関連機能の親ディレクトリ
 │   │       ├── components/          # この機能で使用されるコンポーネント
-│   │       │   ├── user-list.ts     # ユーザーリスト取得・表示用コンポーネント
-│   │       │   └── *.ts             # その他のコンポーネント
+│   │       │   ├── simulation-form.tsx  # 電気シュミレーションFormコンポーネント
+│   │       │   └── *.tsx            # その他のコンポーネント
 │   │       ├── hooks/               # この機能で使用されるフック
-│   │       │   ├── use-user-search.ts # ユーザー検索用フック
-│   │       │   └── *.ts             # その他のフック
+│   │       │   ├── use-simulation-form.ts # 電気シュミレーションForm用カスタムフック
+│   │       │   └── *.ts             # その他のカスタムフック
 │   │       ├── types/               # この機能で使用される型定義
 │   │       │   ├── schema/          # Zodスキーマ
-│   │       │   │   ├── user-search-schema.ts # ユーザー検索用Zodスキーマ
+│   │       │   │   ├── simulation-schema.ts # 電気シュミレーション用Zodスキーマ
 │   │       │   │   └── *.ts         # その他のZodスキーマ
 │   │       │   ├── search-params/   # nuqs検索パラメータ型定義
-│   │       │   │   ├── user-search-params.ts # ユーザー検索用検索パラメータ型定義
+│   │       │   │   ├── simulation-search-params.ts # 電気シュミレーション用検索パラメータ型定義
 │   │       │   │   └── *.ts         # その他の検索パラメータ型定義
-│   │       │   ├── user.ts          # ユーザー関連型定義
+│   │       │   ├── simulation.ts    # 電気シュミレーション関連型定義
 │   │       │   └── *.ts             # その他の型定義ファイル
 │   │       └── utils/               # この機能で使用されるユーティリティ定義
 │   ├── hooks/                       # アプリ全体で使用されるカスタムフック（use-***.ts）
@@ -77,7 +77,7 @@ bun run preview
 │   │   └── *.png                    # 任意の画面や要素のスクリーンショット
 │   ├── fixtures/                    # テストデータとモックファイル
 │   ├── unit/                        # 単体テストディレクトリ
-│   │   └── users
+│   │   └── simulation
 |   │        |── hooks               # カスタムhooks単体テストディレクトリ
 |   │        |     └── *.spec.ts     # カスタムhooks単体テストファイル
 |   │        └── utils               # utility単体テストディレクトリ

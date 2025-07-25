@@ -4,7 +4,7 @@ import type {
   ElectricityCompany,
   ElectricityPlan,
   FormStep,
-} from "~/features/simulation/types"
+} from "~/features/simulation/types/simulation"
 
 export const ELECTRICITY_AREAS = {
   tokyo: {

@@ -1,6 +1,6 @@
 import { IconCheck } from "@tabler/icons-react"
 import { clsx } from "clsx"
-import type { FormStep } from "~/features/simulation/types"
+import type { FormStep } from "~/features/simulation/types/simulation"
 
 export function SimulationProgress({ steps }: Record<"steps", FormStep[]>) {
   const currentStepIndex = steps.findIndex((step) => step.enabled && !step.completed)
