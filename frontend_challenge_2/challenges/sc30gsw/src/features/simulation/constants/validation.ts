@@ -4,7 +4,6 @@ export const POSTAL_CODE_REGEX = /^\d{7}$/
 export const POSTAL_CODE_LENGTH = 7
 
 export const MIN_ELECTRICITY_BILL = 1000
-export const MAX_ELECTRICITY_BILL = 999999
 
 export const MIN_CAPACITY = 6
 export const MAX_CAPACITY = 49

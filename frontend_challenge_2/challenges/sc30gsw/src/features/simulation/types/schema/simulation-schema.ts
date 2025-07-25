@@ -12,7 +12,6 @@ import { VALIDATION_TEXTS } from "~/features/simulation/constants/field-definiti
 import {
   KANSAI_AREA_FIRST_DIGIT,
   MAX_CAPACITY,
-  MAX_ELECTRICITY_BILL,
   MIN_CAPACITY,
   MIN_ELECTRICITY_BILL,
   MIN_EMAIL_LENGTH,
@@ -65,8 +64,6 @@ export const electricityBillSchema = z
     message: "電気代は数値で入力してください。",
   })
   .min(MIN_ELECTRICITY_BILL, VALIDATION_TEXTS.ELECTRICITY_BILL_ERROR)
-  .max(MAX_ELECTRICITY_BILL, "電気代が大きすぎます。")
-
 export const emailSchema = z
   .email("メールアドレスを正しく入力してください。")
   .min(MIN_EMAIL_LENGTH, "メールアドレスは必須です。")

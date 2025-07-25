@@ -129,12 +129,6 @@ describe('simulation-schema', () => {
       expect(result.error?.issues[0]?.message).toBe('電気代を正しく入力してください。')
     })
 
-    it('999999円を超える値は無効', () => {
-      const result = electricityBillSchema.safeParse(1000000)
-      expect(result.success).toBe(false)
-      expect(result.error?.issues[0]?.message).toBe('電気代が大きすぎます。')
-    })
-
     it('文字列は無効', () => {
       const result = electricityBillSchema.safeParse('5000')
       expect(result.success).toBe(false)
