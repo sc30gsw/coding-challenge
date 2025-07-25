@@ -22,7 +22,7 @@ type UseSimulationFormOptions = {
   onSubmit?: (data: SimulationFormData) => void | Promise<void>
 }
 
-export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulationFormOptions = {}) {
+export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulationFormOptions) {
   const [customErrors, setCustomErrors] = useState<Record<string, string>>({})
 
   const finalDefaultValues = useMemo(() => {
