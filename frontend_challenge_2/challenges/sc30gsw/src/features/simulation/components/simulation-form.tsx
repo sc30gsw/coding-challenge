@@ -116,14 +116,17 @@ export const SimulationForm = memo(function SimulationForm({
                   disabled={!formState.enabledFields.electricityBill}
                 />
               </div>
+            </div>
+          </section>
 
-              <div>
-                <FieldLabel label={FIELD_LABELS.EMAIL} />
-                <EmailField
-                  error={getFieldError(FIELD_NAMES.EMAIL)}
-                  disabled={!formState.enabledFields.email || !!getFieldError(FIELD_NAMES.COMPANY)}
-                />
-              </div>
+          <section className="rounded-lg bg-white p-6">
+            <SectionHeader title="メールアドレスを入力してください" />
+            <div>
+              <FieldLabel label={FIELD_LABELS.EMAIL} />
+              <EmailField
+                error={getFieldError(FIELD_NAMES.EMAIL)}
+                disabled={!formState.enabledFields.email || !!getFieldError(FIELD_NAMES.COMPANY)}
+              />
             </div>
           </section>
 
