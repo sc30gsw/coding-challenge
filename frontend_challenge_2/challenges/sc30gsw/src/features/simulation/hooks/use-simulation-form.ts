@@ -1,10 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useCallback, useMemo, useState } from "react"
+import { AREA_CODES, COMPANY_CODES } from "~/features/simulation/constants/company-codes"
+import { EMAIL_REGEX } from "~/features/simulation/constants/validation"
 import {
   type SimulationFormData,
   simulationSchema,
   validateSimulationForm,
 } from "~/features/simulation/types/schema/simulation-schema"
+import type { ElectricityArea } from "~/features/simulation/types/simulation"
 import { detectAreaFromPostalCode } from "~/features/simulation/utils/area-detection"
 import {
   analyzeFormState,
@@ -25,7 +28,7 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
   const finalDefaultValues = useMemo(() => {
     const baseDefaults = {
       postalCode: "",
-      area: "unsupported",
+      area: AREA_CODES.UNSUPPORTED,
       company: "",
       plan: undefined,
       electricityBill: 0,
@@ -65,7 +68,7 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
       }
     })
 
-    if (formData.email && !/^[^@\s]+@[^@\s]+\.[^@\s.]+$/.test(formData.email)) {
+    if (formData.email && !EMAIL_REGEX.test(formData.email)) {
       formErrorsMap.email = "メールアドレスを正しく入力してください。"
     }
 
@@ -82,7 +85,7 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
   const resetFieldsFromIndex = useCallback(
     (fieldNames: Array<keyof SimulationFormData>) => {
       const defaultValues = {
-        area: "unsupported",
+        area: AREA_CODES.UNSUPPORTED,
         company: "",
         plan: undefined,
         capacity: null,
@@ -104,7 +107,7 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
       const areaResult = detectAreaFromPostalCode(postalCode)
 
       // エリアを自動設定
-      setValue("area", areaResult.area as "tokyo" | "kansai" | "unsupported")
+      setValue("area", areaResult.area as ElectricityArea["code"])
 
       setCustomErrors((prev) => {
         const newErrors = { ...prev }
@@ -124,7 +127,7 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
       const fieldsToReset = getFieldsToReset(previousFormData, {
         ...previousFormData,
         postalCode,
-        area: areaResult.area as "tokyo" | "kansai" | "unsupported",
+        area: areaResult.area as ElectricityArea["code"],
       })
 
       if (fieldsToReset.length > 0) {
@@ -154,7 +157,7 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
       // "その他"が選択された場合のエラーメッセージ
       setCustomErrors((prev) => {
         const newErrors = { ...prev }
-        if (company === "other") {
+        if (company === COMPANY_CODES.OTHER) {
           newErrors.company = "シミュレーション対象外です。"
         } else {
           delete newErrors.company

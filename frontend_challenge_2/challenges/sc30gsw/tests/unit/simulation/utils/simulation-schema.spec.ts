@@ -84,8 +84,8 @@ describe('simulation-schema', () => {
 
   describe('capacitySchema', () => {
     it('従量電灯B用の文字列値を受け入れる', () => {
-      expect(capacitySchema.safeParse('30A').success).toBe(true)
-      expect(capacitySchema.safeParse('50A').success).toBe(true)
+      expect(capacitySchema.safeParse(30).success).toBe(true)
+      expect(capacitySchema.safeParse(50).success).toBe(true)
     })
 
     it('kVA用の数値を受け入れる', () => {
@@ -106,8 +106,8 @@ describe('simulation-schema', () => {
       expect(result.success).toBe(false)
     })
 
-    it('49を超える数値は無効', () => {
-      const result = capacitySchema.safeParse(50)
+    it('49を超える数値は無効（AMPERE_VALUES外の場合）', () => {
+      const result = capacitySchema.safeParse(55) // 55はAMPERE_VALUESに含まれていない
       expect(result.success).toBe(false)
     })
 
@@ -168,7 +168,7 @@ describe('simulation-schema', () => {
         area: 'tokyo',
         company: 'tepco',
         plan: 'juryoB',
-        capacity: '30A',
+        capacity: 30,
         electricityBill: 5000,
         email: 'test@example.com',
       } as const satisfies PartialSimulationFormData
@@ -183,7 +183,7 @@ describe('simulation-schema', () => {
         area: 'tokyo',
         company: 'tepco',
         plan: 'juryoB',
-        capacity: '30A',
+        capacity: 30,
         electricityBill: 5000,
         email: 'test@example.com',
       } as const satisfies PartialSimulationFormData
@@ -287,18 +287,18 @@ describe('simulation-schema', () => {
       })
 
       it('関西電力従量電灯Aでは契約容量指定は無効', () => {
-        expect(customValidations.validatePlanCapacityCombination('kepco', 'juryoA', '30A')).toBe(false)
+        expect(customValidations.validatePlanCapacityCombination('kepco', 'juryoA', 30)).toBe(false)
         expect(customValidations.validatePlanCapacityCombination('kepco', 'juryoA', 10)).toBe(false)
       })
 
       it('東京電力従量電灯Bでは指定のアンペア数が有効', () => {
-        expect(customValidations.validatePlanCapacityCombination('tepco', 'juryoB', '30A')).toBe(true)
-        expect(customValidations.validatePlanCapacityCombination('tepco', 'juryoB', '50A')).toBe(true)
+        expect(customValidations.validatePlanCapacityCombination('tepco', 'juryoB', 30)).toBe(true)
+        expect(customValidations.validatePlanCapacityCombination('tepco', 'juryoB', 50)).toBe(true)
       })
 
       it('東京電力従量電灯Bでは無効なアンペア数は無効', () => {
-        expect(customValidations.validatePlanCapacityCombination('tepco', 'juryoB', '70A')).toBe(false)
-        expect(customValidations.validatePlanCapacityCombination('tepco', 'juryoB', 30)).toBe(false)
+        expect(customValidations.validatePlanCapacityCombination('tepco', 'juryoB', 70)).toBe(false)
+        expect(customValidations.validatePlanCapacityCombination('tepco', 'juryoB', 25)).toBe(false) // 25はAMPERE_VALUESに含まれていない
       })
 
       it('東京電力従量電灯CではkVA数値が有効', () => {
@@ -325,7 +325,7 @@ describe('simulation-schema', () => {
         area: 'tokyo',
         company: 'tepco',
         plan: 'juryoB',
-        capacity: '30A',
+        capacity: 30,
       } as const satisfies PartialSimulationFormData
       
       const errors = validateSimulationForm(data)
@@ -356,7 +356,7 @@ describe('simulation-schema', () => {
     it('プランと契約容量の不正な組み合わせでエラー', () => {
       // ? 関西電力従量電灯Aでは契約容量不要
       const data = {
-        capacity: '30A',
+        capacity: 30,
         company: 'kepco',
         plan: 'juryoA',
       } as const satisfies PartialSimulationFormData

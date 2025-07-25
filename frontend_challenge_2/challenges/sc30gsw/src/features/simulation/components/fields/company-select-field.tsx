@@ -4,6 +4,8 @@ import { Controller, useFormContext } from "react-hook-form"
 import Select, { type SingleValue } from "react-select"
 import { FieldWrapper } from "~/features/simulation/components/fields/field-wrapper"
 import { ELECTRICITY_COMPANIES } from "~/features/simulation/constants"
+import { COMPANY_CODES } from "~/features/simulation/constants/company-codes"
+import { FIELD_NAMES } from "~/features/simulation/constants/field-definitions"
 import type { SimulationFormData } from "~/features/simulation/types/schema/simulation-schema"
 import { createSelectStyles } from "~/features/simulation/utils/select-styles"
 
@@ -28,7 +30,7 @@ export function CompanySelectField({
   const { control } = useFormContext<SimulationFormData>()
 
   const availableCompanies = ELECTRICITY_COMPANIES.filter(
-    (company) => company.area === area || company.code === "other",
+    (company) => company.area === area || company.code === COMPANY_CODES.OTHER,
   )
   const companyOptions = availableCompanies.map((company) => ({
     value: company.code,
@@ -38,13 +40,18 @@ export function CompanySelectField({
 
   return (
     <Controller
-      name="company"
+      name={FIELD_NAMES.COMPANY}
       control={control}
       render={({ field }) => {
         const selectedOption = companyOptions.find((option) => option.value === field.value) || null
 
         return (
-          <FieldWrapper name="company" error={error} disabled={disabled} hideLabel={true}>
+          <FieldWrapper
+            name={FIELD_NAMES.COMPANY}
+            error={error}
+            disabled={disabled}
+            hideLabel={true}
+          >
             <div className="relative">
               <div className="-translate-y-1/2 pointer-events-none absolute top-1/2 left-2 z-10 transform sm:left-3">
                 <IconChevronDown stroke={3} size={24} className="text-red-400" />

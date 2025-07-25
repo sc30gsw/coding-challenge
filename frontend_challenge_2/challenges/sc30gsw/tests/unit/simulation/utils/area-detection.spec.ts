@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest'
 import {
   detectAreaFromPostalCode,
 } from '~/features/simulation/utils/area-detection'
+import { AREA_CODES } from '~/features/simulation/constants/company-codes'
+import { VALIDATION_TEXTS } from '~/features/simulation/constants/field-definitions'
 
 describe('area-detection', () => {
   describe('detectAreaFromPostalCode', () => {
@@ -9,7 +11,7 @@ describe('area-detection', () => {
       const result = detectAreaFromPostalCode('1234567')
       
       expect(result).toEqual({
-        area: 'tokyo',
+        area: AREA_CODES.TOKYO,
         areaName: '東京電力エリア',
         isSupported: true,
       })
@@ -19,7 +21,7 @@ describe('area-detection', () => {
       const result = detectAreaFromPostalCode('5678901')
       
       expect(result).toEqual({
-        area: 'kansai',
+        area: AREA_CODES.KANSAI,
         areaName: '関西電力エリア',
         isSupported: true,
       })
@@ -29,10 +31,10 @@ describe('area-detection', () => {
       const result = detectAreaFromPostalCode('2345678')
       
       expect(result).toEqual({
-        area: 'unsupported',
+        area: AREA_CODES.UNSUPPORTED,
         areaName: 'サービスエリア対象外',
         isSupported: false,
-        errorMessage: 'サービスエリア対象外です。',
+        errorMessage: VALIDATION_TEXTS.UNSUPPORTED_AREA_ERROR,
       })
     })
 
@@ -40,10 +42,10 @@ describe('area-detection', () => {
       const result = detectAreaFromPostalCode('123456')
       
       expect(result).toEqual({
-        area: 'unsupported',
+        area: AREA_CODES.UNSUPPORTED,
         areaName: 'サービスエリア対象外',
         isSupported: false,
-        errorMessage: '郵便番号は7桁で入力してください。',
+        errorMessage: VALIDATION_TEXTS.POSTAL_CODE_7_DIGITS_ERROR,
       })
     })
 
@@ -51,10 +53,10 @@ describe('area-detection', () => {
       const result = detectAreaFromPostalCode('12345ab')
       
       expect(result).toEqual({
-        area: 'unsupported',
+        area: AREA_CODES.UNSUPPORTED,
         areaName: 'サービスエリア対象外',
         isSupported: false,
-        errorMessage: '郵便番号は数字のみで入力してください。',
+        errorMessage: VALIDATION_TEXTS.POSTAL_CODE_DIGITS_ONLY_ERROR,
       })
     })
 
@@ -62,10 +64,10 @@ describe('area-detection', () => {
       const result = detectAreaFromPostalCode('')
       
       expect(result).toEqual({
-        area: 'unsupported',
+        area: AREA_CODES.UNSUPPORTED,
         areaName: 'サービスエリア対象外',
         isSupported: false,
-        errorMessage: '郵便番号は7桁で入力してください。',
+        errorMessage: VALIDATION_TEXTS.POSTAL_CODE_7_DIGITS_ERROR,
       })
     })
   })

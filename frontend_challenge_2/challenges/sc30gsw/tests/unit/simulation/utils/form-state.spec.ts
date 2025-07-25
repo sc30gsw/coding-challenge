@@ -95,7 +95,7 @@ describe('form-state', () => {
         postalCode: '1234567',
         company: 'tepco',
         plan: 'juryoB',
-        capacity: '30A',
+        capacity: 30,
         electricityBill: 5000,
         email: 'test@example.com',
       } as const satisfies PartialSimulationFormData
@@ -162,11 +162,11 @@ describe('form-state', () => {
     it('プラン変更時は契約容量をリセット', () => {
       const previousData = {
         plan: 'juryoB',
-        capacity: '30A',
+        capacity: 30,
       } as const satisfies PartialSimulationFormData
       const newData = {
         plan: 'juryoA',
-        capacity: '30A',
+        capacity: 30,
       } as const satisfies PartialSimulationFormData
 
       const fieldsToReset = getFieldsToReset(previousData, newData)
@@ -208,7 +208,7 @@ describe('form-state', () => {
         postalCode: '1234567',
         company: 'tepco',
         plan: 'juryoB',
-        capacity: '30A',
+        capacity: 30,
         electricityBill: 5000,
         email: 'test@example.com',
       } as const satisfies PartialSimulationFormData
@@ -235,7 +235,7 @@ describe('form-state', () => {
         postalCode: '1234567',
         company: 'tepco',
         plan: 'juryoB',
-        capacity: '30A',
+        capacity: 30,
         electricityBill: 5000,
         email: 'test@example.com',
       } as const satisfies PartialSimulationFormData

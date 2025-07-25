@@ -1,4 +1,12 @@
 import { FORM_STEPS } from "~/features/simulation/constants"
+import { COMPANY_CODES } from "~/features/simulation/constants/company-codes"
+import {
+  FIELD_NAMES,
+  FIELD_RESET_DEPENDENCIES,
+  FIELD_TO_STEP_MAP,
+  STEP_IDS,
+} from "~/features/simulation/constants/field-definitions"
+import { EMAIL_REGEX, MIN_ELECTRICITY_BILL } from "~/features/simulation/constants/validation"
 import type {
   PartialSimulationFormData,
   SimulationFormData,
@@ -21,23 +29,23 @@ function processPostalCodeStep(formData: PartialSimulationFormData, state: FormS
   const postalCodeComplete = formData.postalCode && formData.postalCode.length === 7
 
   if (!postalCodeComplete || !formData.postalCode) {
-    state.currentStep = "postal-code"
-    state.nextRequiredField = "postalCode"
+    state.currentStep = STEP_IDS.POSTAL_CODE
+    state.nextRequiredField = FIELD_NAMES.POSTAL_CODE
     return
   }
 
   const areaResult = detectAreaFromPostalCode(formData.postalCode)
-  state.completedSteps["postal-code"] = areaResult.isSupported
+  state.completedSteps[STEP_IDS.POSTAL_CODE] = areaResult.isSupported
 
   if (!areaResult.isSupported) {
-    state.currentStep = "postal-code"
-    state.nextRequiredField = "postalCode"
+    state.currentStep = STEP_IDS.POSTAL_CODE
+    state.nextRequiredField = FIELD_NAMES.POSTAL_CODE
     return
   }
 
   state.enabledFields.company = true
   if (!state.currentStep) {
-    state.currentStep = "company"
+    state.currentStep = STEP_IDS.COMPANY
   }
 }
 
@@ -45,28 +53,28 @@ function processPostalCodeStep(formData: PartialSimulationFormData, state: FormS
  * Step 2: 電力会社選択処理
  */
 function processCompanyStep(formData: PartialSimulationFormData, state: FormStateResult) {
-  if (!state.completedSteps["postal-code"]) {
+  if (!state.completedSteps[STEP_IDS.POSTAL_CODE]) {
     return
   }
 
   if (!formData.company) {
     if (state.enabledFields.company && !state.nextRequiredField) {
-      state.nextRequiredField = "company"
+      state.nextRequiredField = FIELD_NAMES.COMPANY
     }
     return
   }
 
-  if (formData.company === "other") {
+  if (formData.company === COMPANY_CODES.OTHER) {
     state.completedSteps.company = false
-    state.currentStep = "company"
-    state.nextRequiredField = "company"
+    state.currentStep = STEP_IDS.COMPANY
+    state.nextRequiredField = FIELD_NAMES.COMPANY
     return
   }
 
   state.completedSteps.company = true
   state.enabledFields.plan = true
-  if (!state.currentStep || state.currentStep === "company") {
-    state.currentStep = "plan"
+  if (!state.currentStep || state.currentStep === STEP_IDS.COMPANY) {
+    state.currentStep = STEP_IDS.PLAN
   }
 }
 
@@ -76,26 +84,28 @@ function processCompanyStep(formData: PartialSimulationFormData, state: FormStat
 function processPlanStep(formData: PartialSimulationFormData, state: FormStateResult) {
   if (!state.completedSteps.company || !formData.plan) {
     if (state.enabledFields.plan && !state.nextRequiredField) {
-      state.nextRequiredField = "plan"
+      state.nextRequiredField = FIELD_NAMES.PLAN
     }
     return
   }
 
   state.completedSteps.plan = true
-  const capacityRequired = isCapacityRequired(formData.company!, formData.plan!)
+  const capacityRequired = formData.company
+    ? isCapacityRequired(formData.company, formData.plan!)
+    : false
 
   if (capacityRequired) {
     state.enabledFields.capacity = true
-    if (!state.currentStep || state.currentStep === "plan") {
-      state.currentStep = "capacity"
+    if (!state.currentStep || state.currentStep === STEP_IDS.PLAN) {
+      state.currentStep = STEP_IDS.CAPACITY
     }
     return
   }
 
   state.completedSteps.capacity = true
   state.enabledFields.electricityBill = true
-  if (!state.currentStep || state.currentStep === "plan") {
-    state.currentStep = "electricity-bill"
+  if (!state.currentStep || state.currentStep === STEP_IDS.PLAN) {
+    state.currentStep = STEP_IDS.ELECTRICITY_BILL
   }
 }
 
@@ -110,15 +120,15 @@ function processCapacityStep(formData: PartialSimulationFormData, state: FormSta
   const capacityComplete = formData.capacity !== null && formData.capacity !== undefined
   if (!capacityComplete) {
     if (!state.nextRequiredField) {
-      state.nextRequiredField = "capacity"
+      state.nextRequiredField = FIELD_NAMES.CAPACITY
     }
     return
   }
 
   state.completedSteps.capacity = true
   state.enabledFields.electricityBill = true
-  if (!state.currentStep || state.currentStep === "capacity") {
-    state.currentStep = "electricity-bill"
+  if (!state.currentStep || state.currentStep === STEP_IDS.CAPACITY) {
+    state.currentStep = STEP_IDS.ELECTRICITY_BILL
   }
 }
 
@@ -127,19 +137,19 @@ function processCapacityStep(formData: PartialSimulationFormData, state: FormSta
  */
 function processElectricityBillStep(formData: PartialSimulationFormData, state: FormStateResult) {
   const capacityReady = state.completedSteps.capacity || !state.enabledFields.capacity
-  const billComplete = formData.electricityBill && formData.electricityBill >= 1000
+  const billComplete = formData.electricityBill && formData.electricityBill >= MIN_ELECTRICITY_BILL
 
   if (!capacityReady || !billComplete) {
     if (state.enabledFields.electricityBill && !state.nextRequiredField) {
-      state.nextRequiredField = "electricityBill"
+      state.nextRequiredField = FIELD_NAMES.ELECTRICITY_BILL
     }
     return
   }
 
-  state.completedSteps["electricity-bill"] = true
+  state.completedSteps[STEP_IDS.ELECTRICITY_BILL] = true
   state.enabledFields.email = true
-  if (!state.currentStep || state.currentStep === "electricity-bill") {
-    state.currentStep = "email"
+  if (!state.currentStep || state.currentStep === STEP_IDS.ELECTRICITY_BILL) {
+    state.currentStep = STEP_IDS.EMAIL
   }
 }
 
@@ -147,14 +157,14 @@ function processElectricityBillStep(formData: PartialSimulationFormData, state: 
  * Step 6: メールアドレス入力処理
  */
 function processEmailStep(formData: PartialSimulationFormData, state: FormStateResult) {
-  if (!state.completedSteps["electricity-bill"]) {
+  if (!state.completedSteps[STEP_IDS.ELECTRICITY_BILL]) {
     return
   }
 
-  const emailComplete = formData.email && /^[^@\s]+@[^@\s]+\.[^@\s.]+$/.test(formData.email)
+  const emailComplete = formData.email && EMAIL_REGEX.test(formData.email)
   if (!emailComplete) {
     if (state.enabledFields.email && !state.nextRequiredField) {
-      state.nextRequiredField = "email"
+      state.nextRequiredField = FIELD_NAMES.EMAIL
     }
     return
   }
@@ -194,11 +204,11 @@ export function analyzeFormState(formData: PartialSimulationFormData) {
 
   // フォーム完了判定
   const isFormComplete = Boolean(
-    state.completedSteps["postal-code"] &&
+    state.completedSteps[STEP_IDS.POSTAL_CODE] &&
       state.completedSteps.company &&
       state.completedSteps.plan &&
       state.completedSteps.capacity &&
-      state.completedSteps["electricity-bill"] &&
+      state.completedSteps[STEP_IDS.ELECTRICITY_BILL] &&
       state.completedSteps.email,
   )
 
@@ -208,11 +218,7 @@ export function analyzeFormState(formData: PartialSimulationFormData) {
   }
 }
 
-const FIELD_RESET_MAP = {
-  postalCode: ["area", "company", "plan", "capacity"],
-  company: ["plan", "capacity"],
-  plan: ["capacity"],
-} as const satisfies Record<string, Array<keyof SimulationFormData>>
+const FIELD_RESET_MAP = FIELD_RESET_DEPENDENCIES
 
 /**
  * フォームのリセットが必要かどうかを判定する
@@ -228,11 +234,11 @@ export function getFieldsToReset(
 
   // ? 郵便番号変更時、フォームをリセットする必要がある
   if (previousData.postalCode !== newData.postalCode) {
-    FIELD_RESET_MAP.postalCode.forEach((field) => fieldsToReset.add(field))
+    FIELD_RESET_MAP[FIELD_NAMES.POSTAL_CODE].forEach((field) => fieldsToReset.add(field))
   }
 
   // その他のフィールド変更処理
-  const fieldsToCheck = ["company", "plan"] as const
+  const fieldsToCheck = [FIELD_NAMES.COMPANY, FIELD_NAMES.PLAN] as const
 
   for (const field of fieldsToCheck) {
     if (previousData[field] !== newData[field]) {
@@ -260,20 +266,14 @@ export function updateFormStepsWithErrors(
     ...step,
     completed: state.completedSteps[step.id] || false,
     enabled:
-      step.id === "postal-code" || state.completedSteps[step.id] || state.currentStep === step.id,
+      step.id === STEP_IDS.POSTAL_CODE ||
+      state.completedSteps[step.id] ||
+      state.currentStep === step.id,
     hasError: false, // エラー状態は別途管理
   }))
 
   // エラーがあるフィールドに対応するステップにエラーフラグを設定
-  const fieldToStepMap: Record<keyof SimulationFormData, string> = {
-    postalCode: "postal-code",
-    area: "postal-code",
-    company: "company",
-    plan: "plan",
-    capacity: "capacity",
-    electricityBill: "electricity-bill",
-    email: "email",
-  }
+  const fieldToStepMap = FIELD_TO_STEP_MAP
 
   return steps.map((step: FormStep) => ({
     ...step,

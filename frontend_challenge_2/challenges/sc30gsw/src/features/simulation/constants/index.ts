@@ -1,143 +1,131 @@
+import {
+  AMPERE_VALUES,
+  AREA_CODES,
+  CAPACITY_UNITS,
+  COMPANY_CODES,
+  PLAN_CODES,
+} from "~/features/simulation/constants/company-codes"
+import { FIELD_LABELS, STEP_IDS } from "~/features/simulation/constants/field-definitions"
 import type {
-  CapacityOption,
   ElectricityArea,
   ElectricityCompany,
   ElectricityPlan,
   FormStep,
 } from "~/features/simulation/types/simulation"
+import {
+  createCapacityOptions,
+  createKVACapacityOptions,
+} from "~/features/simulation/utils/capacity-generator"
 
 export const ELECTRICITY_AREAS = {
-  tokyo: {
-    code: "tokyo",
+  [AREA_CODES.TOKYO]: {
+    code: AREA_CODES.TOKYO,
     name: "東京電力エリア",
     postalCodePattern: /^1/,
   },
-  kansai: {
-    code: "kansai",
+  [AREA_CODES.KANSAI]: {
+    code: AREA_CODES.KANSAI,
     name: "関西電力エリア",
     postalCodePattern: /^5/,
   },
-  unsupported: {
-    code: "unsupported",
+  [AREA_CODES.UNSUPPORTED]: {
+    code: AREA_CODES.UNSUPPORTED,
     name: "サービスエリア対象外",
     postalCodePattern: /^[^15]/,
   },
 } as const satisfies Record<ElectricityArea["code"], ElectricityArea>
 
-export const CAPACITY_OPTIONS = {
-  tepcoJuryoB: [
-    { value: "10A", label: "10A", unit: "A" },
-    { value: "15A", label: "15A", unit: "A" },
-    { value: "20A", label: "20A", unit: "A" },
-    { value: "30A", label: "30A", unit: "A" },
-    { value: "40A", label: "40A", unit: "A" },
-    { value: "50A", label: "50A", unit: "A" },
-    { value: "60A", label: "60A", unit: "A" },
-  ],
-  tepcoJuryoC: Array.from({ length: 44 }, (_, i) => ({
-    value: i + 6,
-    label: `${i + 6}kVA`,
-    unit: "kVA",
-  })),
-  kepcoJuryoA: [], // 契約容量不要
-  kepcoJuryoB: Array.from({ length: 44 }, (_, i) => ({
-    value: i + 6,
-    label: `${i + 6}kVA`,
-    unit: "kVA",
-  })),
-} as const satisfies Record<string, CapacityOption[]>
-
 export const ELECTRICITY_PLANS = [
   {
-    code: "juryoB",
+    code: PLAN_CODES.JURYO_B,
     name: "従量電灯B",
-    company: "tepco",
-    capacityOptions: CAPACITY_OPTIONS.tepcoJuryoB,
+    company: COMPANY_CODES.TEPCO,
+    capacityOptions: createCapacityOptions(AMPERE_VALUES, CAPACITY_UNITS.AMPERE),
     requiresCapacity: true,
   },
   {
-    code: "juryoC",
+    code: PLAN_CODES.JURYO_C,
     name: "従量電灯C",
-    company: "tepco",
-    capacityOptions: CAPACITY_OPTIONS.tepcoJuryoC,
+    company: COMPANY_CODES.TEPCO,
+    capacityOptions: createKVACapacityOptions(),
     requiresCapacity: true,
   },
   {
-    code: "juryoA",
+    code: PLAN_CODES.JURYO_A,
     name: "従量電灯A",
-    company: "kepco",
-    capacityOptions: CAPACITY_OPTIONS.kepcoJuryoA,
+    company: COMPANY_CODES.KEPCO,
+    capacityOptions: [],
     requiresCapacity: false,
   },
   {
-    code: "juryoB",
+    code: PLAN_CODES.JURYO_B,
     name: "従量電灯B",
-    company: "kepco",
-    capacityOptions: CAPACITY_OPTIONS.kepcoJuryoB,
+    company: COMPANY_CODES.KEPCO,
+    capacityOptions: createKVACapacityOptions(),
     requiresCapacity: true,
   },
 ] as const satisfies ElectricityPlan[]
 
 export const ELECTRICITY_COMPANIES = [
   {
-    code: "tepco",
+    code: COMPANY_CODES.TEPCO,
     name: "東京電力",
-    area: "tokyo",
-    supportedPlans: ELECTRICITY_PLANS.filter((plan) => plan.company === "tepco"),
+    area: AREA_CODES.TOKYO,
+    supportedPlans: ELECTRICITY_PLANS.filter((plan) => plan.company === COMPANY_CODES.TEPCO),
   },
   {
-    code: "kepco",
+    code: COMPANY_CODES.KEPCO,
     name: "関西電力",
-    area: "kansai",
-    supportedPlans: ELECTRICITY_PLANS.filter((plan) => plan.company === "kepco"),
+    area: AREA_CODES.KANSAI,
+    supportedPlans: ELECTRICITY_PLANS.filter((plan) => plan.company === COMPANY_CODES.KEPCO),
   },
   {
-    code: "other",
+    code: COMPANY_CODES.OTHER,
     name: "その他",
-    area: "tokyo",
+    area: AREA_CODES.TOKYO,
     supportedPlans: [],
   },
 ] as const satisfies ElectricityCompany[]
 
 export const FORM_STEPS = [
   {
-    id: "postal-code",
-    name: "郵便番号",
+    id: STEP_IDS.POSTAL_CODE,
+    name: FIELD_LABELS.POSTAL_CODE,
     completed: false,
     enabled: true,
     hasError: false,
   },
   {
-    id: "company",
-    name: "電力会社",
+    id: STEP_IDS.COMPANY,
+    name: FIELD_LABELS.COMPANY,
     completed: false,
     enabled: false,
     hasError: false,
   },
   {
-    id: "plan",
-    name: "プラン",
+    id: STEP_IDS.PLAN,
+    name: FIELD_LABELS.PLAN,
     completed: false,
     enabled: false,
     hasError: false,
   },
   {
-    id: "capacity",
-    name: "契約容量",
+    id: STEP_IDS.CAPACITY,
+    name: FIELD_LABELS.CAPACITY,
     completed: false,
     enabled: false,
     hasError: false,
   },
   {
-    id: "electricity-bill",
-    name: "電気代",
+    id: STEP_IDS.ELECTRICITY_BILL,
+    name: FIELD_LABELS.ELECTRICITY_BILL,
     completed: false,
     enabled: false,
     hasError: false,
   },
   {
-    id: "email",
-    name: "メールアドレス",
+    id: STEP_IDS.EMAIL,
+    name: FIELD_LABELS.EMAIL,
     completed: false,
     enabled: false,
     hasError: false,

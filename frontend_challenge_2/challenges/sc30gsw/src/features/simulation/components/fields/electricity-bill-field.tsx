@@ -1,6 +1,7 @@
 import { clsx } from "clsx"
 import { Controller, useFormContext } from "react-hook-form"
 import { FieldWrapper } from "~/features/simulation/components/fields/field-wrapper"
+import { FIELD_NAMES } from "~/features/simulation/constants/field-definitions"
 import type { SimulationFormData } from "~/features/simulation/types/schema/simulation-schema"
 
 type ElectricityBillFieldProps = {
@@ -27,16 +28,21 @@ export function ElectricityBillField({
 
   return (
     <Controller
-      name="electricityBill"
+      name={FIELD_NAMES.ELECTRICITY_BILL}
       control={control}
       render={({ field }) => {
         const displayValue = field.value > 0 ? formatNumber(field.value) : ""
 
         return (
-          <FieldWrapper name="electricityBill" error={error} disabled={disabled} hideLabel={true}>
+          <FieldWrapper
+            name={FIELD_NAMES.ELECTRICITY_BILL}
+            error={error}
+            disabled={disabled}
+            hideLabel={true}
+          >
             <div className="flex items-center gap-2">
               <input
-                id="electricityBill"
+                id={FIELD_NAMES.ELECTRICITY_BILL}
                 type="text"
                 value={displayValue}
                 placeholder="10,000"

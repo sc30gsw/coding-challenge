@@ -11,6 +11,7 @@ import { EmailField } from "~/features/simulation/components/fields/email-field"
 import { PlanSelectField } from "~/features/simulation/components/fields/plan-select-field"
 import { PostalCodeField } from "~/features/simulation/components/fields/postal-code-field"
 import { SimulationProgress } from "~/features/simulation/components/simulation-progress"
+import { FIELD_LABELS, FIELD_NAMES } from "~/features/simulation/constants/field-definitions"
 import { useSimulationForm } from "~/features/simulation/hooks/use-simulation-form"
 import type { SimulationFormData } from "~/features/simulation/types/schema/simulation-schema"
 
@@ -61,7 +62,7 @@ export const SimulationForm = memo(function SimulationForm({
             <SectionHeader title="郵便番号を入力してください" className="mb-4" />
             <FieldLabel label="電気を使用する場所の郵便番号" />
             <PostalCodeField
-              error={getFieldError("postalCode")}
+              error={getFieldError(FIELD_NAMES.POSTAL_CODE)}
               onChange={handlePostalCodeChange}
             />
           </section>
@@ -71,9 +72,9 @@ export const SimulationForm = memo(function SimulationForm({
 
             <div className="space-y-6">
               <div>
-                <FieldLabel label="電力会社" />
+                <FieldLabel label={FIELD_LABELS.COMPANY} />
                 <CompanySelectField
-                  error={getFieldError("company")}
+                  error={getFieldError(FIELD_NAMES.COMPANY)}
                   disabled={!formState.enabledFields.company}
                   area={formData.area}
                   onChange={handleCompanyChange}
@@ -81,9 +82,9 @@ export const SimulationForm = memo(function SimulationForm({
               </div>
 
               <div>
-                <FieldLabel label="プラン" />
+                <FieldLabel label={FIELD_LABELS.PLAN} />
                 <PlanSelectField
-                  error={getFieldError("plan")}
+                  error={getFieldError(FIELD_NAMES.PLAN)}
                   disabled={!formState.enabledFields.plan}
                   company={formData.company}
                   onChange={handlePlanChange}
@@ -92,9 +93,9 @@ export const SimulationForm = memo(function SimulationForm({
 
               {formState.enabledFields.capacity && (
                 <div>
-                  <FieldLabel label="契約容量" />
+                  <FieldLabel label={FIELD_LABELS.CAPACITY} />
                   <CapacitySelectField
-                    error={getFieldError("capacity")}
+                    error={getFieldError(FIELD_NAMES.CAPACITY)}
                     disabled={!formState.enabledFields.capacity}
                     company={formData.company}
                     plan={formData.plan}
@@ -109,18 +110,18 @@ export const SimulationForm = memo(function SimulationForm({
 
             <div className="space-y-6">
               <div>
-                <FieldLabel label="先月の電気代は？" />
+                <FieldLabel label={FIELD_LABELS.ELECTRICITY_BILL} />
                 <ElectricityBillField
-                  error={getFieldError("electricityBill")}
+                  error={getFieldError(FIELD_NAMES.ELECTRICITY_BILL)}
                   disabled={!formState.enabledFields.electricityBill}
                 />
               </div>
 
               <div>
-                <FieldLabel label="メールアドレス" />
+                <FieldLabel label={FIELD_LABELS.EMAIL} />
                 <EmailField
-                  error={getFieldError("email")}
-                  disabled={!formState.enabledFields.email || !!getFieldError("company")}
+                  error={getFieldError(FIELD_NAMES.EMAIL)}
+                  disabled={!formState.enabledFields.email || !!getFieldError(FIELD_NAMES.COMPANY)}
                 />
               </div>
             </div>

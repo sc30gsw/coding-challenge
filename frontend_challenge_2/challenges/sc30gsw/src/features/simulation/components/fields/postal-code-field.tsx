@@ -3,6 +3,7 @@ import type { ComponentProps } from "react"
 import { useRef, useState } from "react"
 import { Controller, type ControllerRenderProps, useFormContext } from "react-hook-form"
 import { FieldWrapper } from "~/features/simulation/components/fields/field-wrapper"
+import { FIELD_NAMES } from "~/features/simulation/constants/field-definitions"
 import type { SimulationFormData } from "~/features/simulation/types/schema/simulation-schema"
 
 type PostalCodeFieldProps = {
@@ -54,7 +55,7 @@ export function PostalCodeField({ error, disabled = false, onChange }: PostalCod
 
   return (
     <Controller
-      name="postalCode"
+      name={FIELD_NAMES.POSTAL_CODE}
       control={control}
       render={({ field }) => {
         const currentFullValue = postalCodeValue.first + postalCodeValue.second
@@ -70,7 +71,12 @@ export function PostalCodeField({ error, disabled = false, onChange }: PostalCod
         const handleSecondInputChange = createInputHandler("second", 4, field.onChange)
 
         return (
-          <FieldWrapper name="postalCode" error={error} disabled={disabled} hideLabel={true}>
+          <FieldWrapper
+            name={FIELD_NAMES.POSTAL_CODE}
+            error={error}
+            disabled={disabled}
+            hideLabel={true}
+          >
             <div
               className="rounded-md bg-gray-100 p-2 sm:p-3"
               role="group"

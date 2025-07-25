@@ -1,6 +1,7 @@
 import { clsx } from "clsx"
 import { Controller, useFormContext } from "react-hook-form"
 import { FieldWrapper } from "~/features/simulation/components/fields/field-wrapper"
+import { FIELD_NAMES } from "~/features/simulation/constants/field-definitions"
 import type { SimulationFormData } from "~/features/simulation/types/schema/simulation-schema"
 
 type EmailFieldProps = {
@@ -14,13 +15,13 @@ export function EmailField({ error, disabled = false, onChange }: EmailFieldProp
 
   return (
     <Controller
-      name="email"
+      name={FIELD_NAMES.EMAIL}
       control={control}
       render={({ field }) => (
-        <FieldWrapper name="email" error={error} disabled={disabled} hideLabel={true}>
+        <FieldWrapper name={FIELD_NAMES.EMAIL} error={error} disabled={disabled} hideLabel={true}>
           <input
             {...field}
-            id="email"
+            id={FIELD_NAMES.EMAIL}
             type="email"
             placeholder="example@email.com"
             disabled={disabled}

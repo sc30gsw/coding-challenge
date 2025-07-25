@@ -4,6 +4,8 @@ import { Controller, useFormContext } from "react-hook-form"
 import Select, { type SingleValue } from "react-select"
 import { FieldWrapper } from "~/features/simulation/components/fields/field-wrapper"
 import { ELECTRICITY_COMPANIES } from "~/features/simulation/constants"
+import { COMPANY_CODES, PLAN_CODES } from "~/features/simulation/constants/company-codes"
+import { FIELD_NAMES } from "~/features/simulation/constants/field-definitions"
 import type { SimulationFormData } from "~/features/simulation/types/schema/simulation-schema"
 import { createSelectStyles } from "~/features/simulation/utils/select-styles"
 
@@ -42,13 +44,13 @@ export function PlanSelectField({
     }
 
     switch (planCode) {
-      case "juryoA":
+      case PLAN_CODES.JURYO_A:
         return "関西電力の従量電灯プランで、一般家庭向けの基本プランです。契約容量の設定はありません。"
-      case "juryoB":
-        return company === "tepco"
+      case PLAN_CODES.JURYO_B:
+        return company === COMPANY_CODES.TEPCO
           ? "東京電力の従量電灯プランで、10A～60Aのアンペア単位で契約します。"
           : "関西電力の従量電灯プランで、6kVA～49kVAのkVA単位で契約します。"
-      case "juryoC":
+      case PLAN_CODES.JURYO_C:
         return "東京電力の従量電灯プランで、6kVA～49kVAのkVA単位で契約します。大容量を使用する家庭や店舗向けです。"
       default:
         return null
@@ -59,13 +61,13 @@ export function PlanSelectField({
 
   return (
     <Controller
-      name="plan"
+      name={FIELD_NAMES.PLAN}
       control={control}
       render={({ field }) => {
         const selectedOption = planOptions.find((option) => option.value === field.value) || null
 
         return (
-          <FieldWrapper name="plan" error={error} disabled={disabled} hideLabel={true}>
+          <FieldWrapper name={FIELD_NAMES.PLAN} error={error} disabled={disabled} hideLabel={true}>
             <div className="relative">
               <div className="-translate-y-1/2 pointer-events-none absolute top-6 left-2 z-10 transform sm:left-3">
                 <IconChevronDown stroke={3} size={24} className="text-red-400" />
