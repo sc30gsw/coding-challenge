@@ -18,7 +18,7 @@ import { isCapacityRequired } from "~/features/simulation/utils/capacity-options
 type FormStateResult = {
   enabledFields: Record<keyof SimulationFormData, boolean>
   completedSteps: Record<string, boolean>
-  currentStep: string | null
+  currentStep: (typeof STEP_IDS)[keyof typeof STEP_IDS] | null
   nextRequiredField: keyof SimulationFormData | null
 }
 
@@ -190,7 +190,7 @@ export function analyzeFormState(formData: PartialSimulationFormData) {
       email: false,
     },
     completedSteps: {},
-    currentStep: null,
+    currentStep: STEP_IDS.POSTAL_CODE,
     nextRequiredField: null,
   }
 
