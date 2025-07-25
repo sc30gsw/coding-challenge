@@ -297,4 +297,65 @@ describe('form-state', () => {
       expect(capacityStep).toBeDefined()
     })
   })
+
+  describe('純粋関数構造のテスト（副作用なし）', () => {
+    it('各ステップ関数は元のstateを変更しない', () => {
+      const originalState = {
+        enabledFields: {
+          postalCode: true,
+          area: false,
+          company: false,
+          plan: false,
+          capacity: false,
+          electricityBill: false,
+          email: false,
+        },
+        completedSteps: {},
+        currentStep: 'postal-code' as const,
+        nextRequiredField: null,
+      }
+      
+      const formData = { postalCode: '1234567' } as const satisfies PartialSimulationFormData
+      
+      const beforeState = JSON.parse(JSON.stringify(originalState))
+      
+      analyzeFormState(formData)
+      
+      expect(originalState).toEqual(beforeState)
+    })
+
+    it('同じ入力データに対して常に同じ結果を返す（純粋関数性）', () => {
+      const formData = {
+        postalCode: '1234567',
+        company: 'tepco',
+        plan: 'juryoB',
+        capacity: 30,
+      } as const satisfies PartialSimulationFormData
+      
+      const result1 = analyzeFormState(formData)
+      const result2 = analyzeFormState(formData)
+      
+      expect(result1).toEqual(result2)
+    })
+
+    it('ステップの依存関係が明示的に表現される', () => {
+      const formData = {
+        postalCode: '1234567',
+        company: 'tepco',
+        plan: 'juryoB',
+        capacity: 30,
+        electricityBill: 5000,
+      } as const satisfies PartialSimulationFormData
+      
+      const result = analyzeFormState(formData)
+      
+      // 依存関係の確認: 前のステップが完了していれば次のステップが有効
+      expect(result.completedSteps['postal-code']).toBe(true)
+      expect(result.completedSteps.company).toBe(true)
+      expect(result.completedSteps.plan).toBe(true)
+      expect(result.completedSteps.capacity).toBe(true)
+      expect(result.enabledFields.email).toBe(true)
+      expect(result.currentStep).toBe('email')
+    })
+  })
 })

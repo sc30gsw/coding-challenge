@@ -29,23 +29,39 @@ function processPostalCodeStep(formData: PartialSimulationFormData, state: FormS
   const postalCodeComplete = formData.postalCode && formData.postalCode.length === 7
 
   if (!postalCodeComplete || !formData.postalCode) {
-    state.currentStep = STEP_IDS.POSTAL_CODE
-    state.nextRequiredField = FIELD_NAMES.POSTAL_CODE
-    return
+    return {
+      ...state,
+      currentStep: STEP_IDS.POSTAL_CODE,
+      nextRequiredField: FIELD_NAMES.POSTAL_CODE,
+    }
   }
 
   const areaResult = detectAreaFromPostalCode(formData.postalCode)
-  state.completedSteps[STEP_IDS.POSTAL_CODE] = areaResult.isSupported
-
-  if (!areaResult.isSupported) {
-    state.currentStep = STEP_IDS.POSTAL_CODE
-    state.nextRequiredField = FIELD_NAMES.POSTAL_CODE
-    return
+  const updatedCompletedSteps = {
+    ...state.completedSteps,
+    [STEP_IDS.POSTAL_CODE]: areaResult.isSupported,
   }
 
-  state.enabledFields.company = true
-  if (!state.currentStep || state.currentStep === STEP_IDS.POSTAL_CODE) {
-    state.currentStep = STEP_IDS.COMPANY
+  if (!areaResult.isSupported) {
+    return {
+      ...state,
+      completedSteps: updatedCompletedSteps,
+      currentStep: STEP_IDS.POSTAL_CODE,
+      nextRequiredField: FIELD_NAMES.POSTAL_CODE,
+    }
+  }
+
+  return {
+    ...state,
+    completedSteps: updatedCompletedSteps,
+    enabledFields: {
+      ...state.enabledFields,
+      company: true,
+    },
+    currentStep:
+      !state.currentStep || state.currentStep === STEP_IDS.POSTAL_CODE
+        ? STEP_IDS.COMPANY
+        : state.currentStep,
   }
 }
 
@@ -54,27 +70,45 @@ function processPostalCodeStep(formData: PartialSimulationFormData, state: FormS
  */
 function processCompanyStep(formData: PartialSimulationFormData, state: FormStateResult) {
   if (!state.completedSteps[STEP_IDS.POSTAL_CODE]) {
-    return
+    return state
   }
 
   if (!formData.company) {
     if (state.enabledFields.company && !state.nextRequiredField) {
-      state.nextRequiredField = FIELD_NAMES.COMPANY
+      return {
+        ...state,
+        nextRequiredField: FIELD_NAMES.COMPANY,
+      }
     }
-    return
+    return state
   }
 
   if (formData.company === COMPANY_CODES.OTHER) {
-    state.completedSteps.company = false
-    state.currentStep = STEP_IDS.COMPANY
-    state.nextRequiredField = FIELD_NAMES.COMPANY
-    return
+    return {
+      ...state,
+      completedSteps: {
+        ...state.completedSteps,
+        company: false,
+      },
+      currentStep: STEP_IDS.COMPANY,
+      nextRequiredField: FIELD_NAMES.COMPANY,
+    }
   }
 
-  state.completedSteps.company = true
-  state.enabledFields.plan = true
-  if (!state.currentStep || state.currentStep === STEP_IDS.COMPANY) {
-    state.currentStep = STEP_IDS.PLAN
+  return {
+    ...state,
+    completedSteps: {
+      ...state.completedSteps,
+      company: true,
+    },
+    enabledFields: {
+      ...state.enabledFields,
+      plan: true,
+    },
+    currentStep:
+      !state.currentStep || state.currentStep === STEP_IDS.COMPANY
+        ? STEP_IDS.PLAN
+        : state.currentStep,
   }
 }
 
@@ -84,28 +118,51 @@ function processCompanyStep(formData: PartialSimulationFormData, state: FormStat
 function processPlanStep(formData: PartialSimulationFormData, state: FormStateResult) {
   if (!state.completedSteps.company || !formData.plan) {
     if (state.enabledFields.plan && !state.nextRequiredField) {
-      state.nextRequiredField = FIELD_NAMES.PLAN
+      return {
+        ...state,
+        nextRequiredField: FIELD_NAMES.PLAN,
+      }
     }
-    return
+    return state
   }
 
-  state.completedSteps.plan = true
   const capacityRequired = formData.company
     ? isCapacityRequired(formData.company, formData.plan!)
     : false
 
   if (capacityRequired) {
-    state.enabledFields.capacity = true
-    if (!state.currentStep || state.currentStep === STEP_IDS.PLAN) {
-      state.currentStep = STEP_IDS.CAPACITY
+    return {
+      ...state,
+      completedSteps: {
+        ...state.completedSteps,
+        plan: true,
+      },
+      enabledFields: {
+        ...state.enabledFields,
+        capacity: true,
+      },
+      currentStep:
+        !state.currentStep || state.currentStep === STEP_IDS.PLAN
+          ? STEP_IDS.CAPACITY
+          : state.currentStep,
     }
-    return
   }
 
-  state.completedSteps.capacity = true
-  state.enabledFields.electricityBill = true
-  if (!state.currentStep || state.currentStep === STEP_IDS.PLAN) {
-    state.currentStep = STEP_IDS.ELECTRICITY_BILL
+  return {
+    ...state,
+    completedSteps: {
+      ...state.completedSteps,
+      plan: true,
+      capacity: true,
+    },
+    enabledFields: {
+      ...state.enabledFields,
+      electricityBill: true,
+    },
+    currentStep:
+      !state.currentStep || state.currentStep === STEP_IDS.PLAN
+        ? STEP_IDS.ELECTRICITY_BILL
+        : state.currentStep,
   }
 }
 
@@ -114,21 +171,34 @@ function processPlanStep(formData: PartialSimulationFormData, state: FormStateRe
  */
 function processCapacityStep(formData: PartialSimulationFormData, state: FormStateResult) {
   if (!state.enabledFields.capacity) {
-    return
+    return state
   }
 
   const capacityComplete = formData.capacity !== null && formData.capacity !== undefined
   if (!capacityComplete) {
     if (!state.nextRequiredField) {
-      state.nextRequiredField = FIELD_NAMES.CAPACITY
+      return {
+        ...state,
+        nextRequiredField: FIELD_NAMES.CAPACITY,
+      }
     }
-    return
+    return state
   }
 
-  state.completedSteps.capacity = true
-  state.enabledFields.electricityBill = true
-  if (!state.currentStep || state.currentStep === STEP_IDS.CAPACITY) {
-    state.currentStep = STEP_IDS.ELECTRICITY_BILL
+  return {
+    ...state,
+    completedSteps: {
+      ...state.completedSteps,
+      capacity: true,
+    },
+    enabledFields: {
+      ...state.enabledFields,
+      electricityBill: true,
+    },
+    currentStep:
+      !state.currentStep || state.currentStep === STEP_IDS.CAPACITY
+        ? STEP_IDS.ELECTRICITY_BILL
+        : state.currentStep,
   }
 }
 
@@ -141,15 +211,28 @@ function processElectricityBillStep(formData: PartialSimulationFormData, state: 
 
   if (!capacityReady || !billComplete) {
     if (state.enabledFields.electricityBill && !state.nextRequiredField) {
-      state.nextRequiredField = FIELD_NAMES.ELECTRICITY_BILL
+      return {
+        ...state,
+        nextRequiredField: FIELD_NAMES.ELECTRICITY_BILL,
+      }
     }
-    return
+    return state
   }
 
-  state.completedSteps[STEP_IDS.ELECTRICITY_BILL] = true
-  state.enabledFields.email = true
-  if (!state.currentStep || state.currentStep === STEP_IDS.ELECTRICITY_BILL) {
-    state.currentStep = STEP_IDS.EMAIL
+  return {
+    ...state,
+    completedSteps: {
+      ...state.completedSteps,
+      [STEP_IDS.ELECTRICITY_BILL]: true,
+    },
+    enabledFields: {
+      ...state.enabledFields,
+      email: true,
+    },
+    currentStep:
+      !state.currentStep || state.currentStep === STEP_IDS.ELECTRICITY_BILL
+        ? STEP_IDS.EMAIL
+        : state.currentStep,
   }
 }
 
@@ -158,19 +241,28 @@ function processElectricityBillStep(formData: PartialSimulationFormData, state: 
  */
 function processEmailStep(formData: PartialSimulationFormData, state: FormStateResult) {
   if (!state.completedSteps[STEP_IDS.ELECTRICITY_BILL]) {
-    return
+    return state
   }
 
   const emailComplete = formData.email && EMAIL_REGEX.test(formData.email)
   if (!emailComplete) {
     if (state.enabledFields.email && !state.nextRequiredField) {
-      state.nextRequiredField = FIELD_NAMES.EMAIL
+      return {
+        ...state,
+        nextRequiredField: FIELD_NAMES.EMAIL,
+      }
     }
-    return
+    return state
   }
 
-  state.completedSteps.email = true
-  state.currentStep = null
+  return {
+    ...state,
+    completedSteps: {
+      ...state.completedSteps,
+      email: true,
+    },
+    currentStep: null,
+  }
 }
 
 /**
@@ -179,7 +271,7 @@ function processEmailStep(formData: PartialSimulationFormData, state: FormStateR
  * @returns フォーム状態分析結果
  */
 export function analyzeFormState(formData: PartialSimulationFormData) {
-  const state: FormStateResult = {
+  const initialState: FormStateResult = {
     enabledFields: {
       postalCode: true,
       area: false,
@@ -194,26 +286,25 @@ export function analyzeFormState(formData: PartialSimulationFormData) {
     nextRequiredField: null,
   }
 
-  // 各ステップを順番に処理
-  processPostalCodeStep(formData, state)
-  processCompanyStep(formData, state)
-  processPlanStep(formData, state)
-  processCapacityStep(formData, state)
-  processElectricityBillStep(formData, state)
-  processEmailStep(formData, state)
+  const postalCodeProcessed = processPostalCodeStep(formData, initialState)
+  const companyProcessed = processCompanyStep(formData, postalCodeProcessed)
+  const planProcessed = processPlanStep(formData, companyProcessed)
+  const capacityProcessed = processCapacityStep(formData, planProcessed)
+  const electricityBillProcessed = processElectricityBillStep(formData, capacityProcessed)
+  const finalState = processEmailStep(formData, electricityBillProcessed)
 
   // フォーム完了判定
   const isFormComplete = Boolean(
-    state.completedSteps[STEP_IDS.POSTAL_CODE] &&
-      state.completedSteps.company &&
-      state.completedSteps.plan &&
-      state.completedSteps.capacity &&
-      state.completedSteps[STEP_IDS.ELECTRICITY_BILL] &&
-      state.completedSteps.email,
+    finalState.completedSteps[STEP_IDS.POSTAL_CODE] &&
+      finalState.completedSteps.company &&
+      finalState.completedSteps.plan &&
+      finalState.completedSteps.capacity &&
+      finalState.completedSteps[STEP_IDS.ELECTRICITY_BILL] &&
+      finalState.completedSteps.email,
   )
 
   return {
-    ...state,
+    ...finalState,
     isFormComplete,
   }
 }
