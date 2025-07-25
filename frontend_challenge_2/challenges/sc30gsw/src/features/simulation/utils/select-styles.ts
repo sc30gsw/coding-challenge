@@ -17,6 +17,8 @@ const DISABLED_BACKGROUND_COLOR = "rgb(249 250 251)"
 const DISABLED_TEXT_COLOR = "rgb(156 163 175)"
 const ERROR_BACKGROUND_COLOR = "rgb(254 242 242)"
 const SELECTED_OPTION_COLOR = "rgb(248 113 113)"
+const DEFAULT_OPTION_COLOR = "rgb(17 24 39)"
+const SHADOW_COLOR = "rgb(0 0 0 / 0.1)"
 
 export function createSelectStyles<T extends SelectOption>({
   error,
@@ -60,7 +62,7 @@ export function createSelectStyles<T extends SelectOption>({
     }),
     singleValue: (provided) => ({
       ...provided,
-      color: disabled ? DISABLED_TEXT_COLOR : "rgb(17 24 39)",
+      color: disabled ? DISABLED_TEXT_COLOR : DEFAULT_OPTION_COLOR,
       margin: "0",
     }),
     placeholder: (provided) => ({
@@ -78,7 +80,7 @@ export function createSelectStyles<T extends SelectOption>({
       ...provided,
       borderRadius: "6px",
       border: `1px solid ${DISABLED_BORDER_COLOR}`,
-      boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+      boxShadow: `0 4px 6px -1px ${SHADOW_COLOR}`,
       zIndex: 50,
     }),
     option: (provided, state) => ({
@@ -88,7 +90,7 @@ export function createSelectStyles<T extends SelectOption>({
         : state.isFocused
           ? ERROR_BACKGROUND_COLOR
           : "white",
-      color: state.isSelected ? "white" : "rgb(17 24 39)",
+      color: state.isSelected ? "white" : DEFAULT_OPTION_COLOR,
       fontSize: "1rem",
       fontWeight: "600",
       padding: "0.75rem 1rem",
