@@ -68,6 +68,19 @@ test.describe("電気料金シミュレーションフォーム", () => {
         
         await expect(page.getByText("シミュレーション結果")).toBeVisible()
       })
+
+      test("東京電力従量電灯B選択時の契約容量必要メッセージの非表示確認", async ({ page }) => {
+        await fillPostalCode(page, "1000001")
+        await selectCompany(page, "東京電力")
+        await selectPlan(page, "従量電灯B")
+        
+        // 契約容量が必要なプランでは情報メッセージが非表示（invisible）
+        const infoMessageContainer = page.getByText("契約容量の入力は不要です").locator("../../..")
+        await expect(infoMessageContainer).toHaveClass(/invisible/)
+        
+        // 契約容量フィールドは表示される
+        await expect(page.getByLabel("契約容量")).toBeVisible()
+      })
     })
 
     test.describe("正常系: 関西電力エリア", () => {
@@ -86,6 +99,22 @@ test.describe("電気料金シミュレーションフォーム", () => {
         await submitButton.click()
         
         await expect(page.getByText("シミュレーション結果")).toBeVisible()
+      })
+
+      test("従量電灯A選択時の契約容量不要メッセージの表示確認", async ({ page }) => {
+        await fillPostalCode(page, "5000001")
+        await selectCompany(page, "関西電力")
+        
+        const infoMessageContainer = page.getByText("契約容量の入力は不要です").locator("../../..")
+        await expect(infoMessageContainer).toHaveClass(/invisible/)
+        
+        await selectPlan(page, "従量電灯A")
+        
+        await expect(infoMessageContainer).toHaveClass(/visible/)
+        await expect(page.getByText("契約容量の入力は不要です")).toBeVisible()
+        await expect(page.getByText("選択されたプランでは契約容量の設定は必要ありません")).toBeVisible()
+        
+        await expect(page.getByLabel("契約容量")).not.toBeVisible()
       })
 
       test("従量電灯B（6-49kVA）の入力フロー", async ({ page }) => {
@@ -108,6 +137,17 @@ test.describe("電気料金シミュレーションフォーム", () => {
         await submitButton.click()
         
         await expect(page.getByText("シミュレーション結果")).toBeVisible()
+      })
+
+      test("従量電灯B選択時の契約容量必要メッセージの非表示確認", async ({ page }) => {
+        await fillPostalCode(page, "5678901")
+        await selectCompany(page, "関西電力")
+        await selectPlan(page, "従量電灯B")
+        
+        const infoMessageContainer = page.getByText("契約容量の入力は不要です").locator("../../..")
+        await expect(infoMessageContainer).toHaveClass(/invisible/)
+        
+        await expect(page.getByLabel("契約容量")).toBeVisible()
       })
     })
 

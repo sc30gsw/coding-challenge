@@ -10,6 +10,7 @@ import { ElectricityBillField } from "~/features/simulation/components/fields/el
 import { EmailField } from "~/features/simulation/components/fields/email-field"
 import { PlanSelectField } from "~/features/simulation/components/fields/plan-select-field"
 import { PostalCodeField } from "~/features/simulation/components/fields/postal-code-field"
+import NoContractRequiredInfo from "~/features/simulation/components/no-contract-required-info"
 import { SimulationProgress } from "~/features/simulation/components/simulation-progress"
 import { FIELD_LABELS, FIELD_NAMES } from "~/features/simulation/constants/field-definitions"
 import { useSimulationForm } from "~/features/simulation/hooks/use-simulation-form"
@@ -102,6 +103,12 @@ export const SimulationForm = memo(function SimulationForm({
                   />
                 </div>
               )}
+
+              <NoContractRequiredInfo
+                company={formData.company}
+                plan={formData.plan}
+                hasError={!!getFieldError(FIELD_NAMES.COMPANY)}
+              />
             </div>
           </section>
 
