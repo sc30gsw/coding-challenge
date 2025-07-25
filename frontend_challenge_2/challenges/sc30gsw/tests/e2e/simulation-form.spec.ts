@@ -216,6 +216,29 @@ test.describe("電気料金シミュレーションフォーム", () => {
           await expect(submitButton).toBeDisabled()
         }
       })
+
+      test("オートコンプリート機能でのメールアドレス入力", async ({ page }) => {
+        await fillPostalCode(page, "1000000")
+        await selectCompany(page, "東京電力")
+        await selectPlan(page, "従量電灯B")
+        await selectCapacity(page, "30A")
+        await fillElectricityBill(page, "5000")
+
+        const emailInput = page.getByLabel("メールアドレス")
+        
+        await emailInput.evaluate((input, email) => {
+          const inputElement = input as HTMLInputElement
+          inputElement.value = email
+          inputElement.dispatchEvent(new Event('input', { bubbles: true }))
+          inputElement.dispatchEvent(new Event('change', { bubbles: true }))
+          inputElement.dispatchEvent(new Event('blur', { bubbles: true }))
+        }, "autocomplete@example.com")
+
+        const submitButton = page.getByRole("button", { name: "結果を見る" })
+        await expect(submitButton).toBeEnabled()
+
+        await expect(page.getByText("メールアドレスを正しく入力してください。")).not.toBeVisible()
+      })
     })
   })
 

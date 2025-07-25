@@ -11,7 +11,7 @@ type EmailFieldProps = {
 }
 
 export function EmailField({ error, disabled = false, onChange }: EmailFieldProps) {
-  const { control } = useFormContext<SimulationFormData>()
+  const { control, trigger } = useFormContext<SimulationFormData>()
 
   return (
     <Controller
@@ -35,6 +35,24 @@ export function EmailField({ error, disabled = false, onChange }: EmailFieldProp
             onChange={(e) => {
               field.onChange(e.target.value)
               onChange?.(e.target.value)
+            }}
+            onInput={async (e) => {
+              const target = e.target as HTMLInputElement
+              field.onChange(target.value)
+              onChange?.(target.value)
+              try {
+                await trigger(FIELD_NAMES.EMAIL)
+              } catch (error) {
+                console.warn("Validation trigger failed:", error)
+              }
+            }}
+            onBlur={async () => {
+              field.onBlur()
+              try {
+                await trigger(FIELD_NAMES.EMAIL)
+              } catch (error) {
+                console.warn("Validation trigger failed:", error)
+              }
             }}
           />
         </FieldWrapper>
