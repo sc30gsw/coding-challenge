@@ -135,28 +135,19 @@ export async function takeDeviceScreenshots(page: Page, testName: string, browse
   const cleanBrowserName = browserName.replace(" ", "-")
 
   await takeScreenshot(page, `${devicePrefix}-${testName}-initial-${cleanBrowserName}.png`)
-
   await fillPostalCode(page, getTestPostalCode(browserName))
-  await page.waitForTimeout(1000)
-
   await selectCompany(page, getTestCompany(browserName))
-  await page.waitForTimeout(1000)
 
   if (browserName !== "Mobile Chrome" || testName !== "kansai-a") {
     await selectPlan(page, getTestPlan(browserName))
-    await page.waitForTimeout(500)
 
     if (getTestPlan(browserName) !== "従量電灯A") {
       await selectCapacity(page, getTestCapacity(browserName))
-      await page.waitForTimeout(500)
     }
   }
 
   await fillElectricityBill(page, getTestElectricityBill(browserName))
-  await page.waitForTimeout(500)
-
   await fillEmail(page, getTestEmail(browserName))
-  await page.waitForTimeout(1000)
 
   await takeScreenshot(page, `${devicePrefix}-${testName}-complete-${cleanBrowserName}.png`)
 }
