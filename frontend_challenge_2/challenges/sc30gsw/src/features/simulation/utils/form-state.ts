@@ -4,6 +4,7 @@ import {
   FIELD_NAMES,
   FIELD_RESET_DEPENDENCIES,
   FIELD_TO_STEP_MAP,
+  STEP_DEPENDENCIES,
   STEP_IDS,
 } from "~/features/simulation/constants/field-definitions"
 import { EMAIL_REGEX, MIN_ELECTRICITY_BILL } from "~/features/simulation/constants/validation"
@@ -20,6 +21,24 @@ type FormStateResult = {
   completedSteps: Record<string, boolean>
   currentStep: (typeof STEP_IDS)[keyof typeof STEP_IDS] | null
   nextRequiredField: keyof SimulationFormData | null
+}
+
+/**
+ * ステップの依存関係をチェックし、依存するステップが未完了の場合は無効にする
+ * @param stepId チェック対象のステップID
+ * @param completedSteps 完了ステップの状態
+ * @returns 依存関係が満たされているかどうか
+ */
+function validateStepDependencies(
+  stepId: (typeof STEP_IDS)[keyof typeof STEP_IDS],
+  completedSteps: Record<string, boolean>,
+): boolean {
+  const dependencies = STEP_DEPENDENCIES[stepId as keyof typeof STEP_DEPENDENCIES]
+  if (!dependencies) {
+    return true
+  }
+
+  return dependencies.every((dependencyStep) => completedSteps[dependencyStep] === true)
 }
 
 /**
@@ -209,7 +228,12 @@ function processElectricityBillStep(formData: PartialSimulationFormData, state: 
   const capacityReady = state.completedSteps.capacity || !state.enabledFields.capacity
   const billComplete = formData.electricityBill && formData.electricityBill >= MIN_ELECTRICITY_BILL
 
-  if (!capacityReady || !billComplete) {
+  const dependenciesValid = validateStepDependencies(
+    STEP_IDS.ELECTRICITY_BILL,
+    state.completedSteps,
+  )
+
+  if (!capacityReady || !billComplete || !dependenciesValid) {
     if (state.enabledFields.electricityBill && !state.nextRequiredField) {
       return {
         ...state,
@@ -240,7 +264,9 @@ function processElectricityBillStep(formData: PartialSimulationFormData, state: 
  * Step 6: メールアドレス入力処理
  */
 function processEmailStep(formData: PartialSimulationFormData, state: FormStateResult) {
-  if (!state.completedSteps[STEP_IDS.ELECTRICITY_BILL]) {
+  const dependenciesValid = validateStepDependencies(STEP_IDS.EMAIL, state.completedSteps)
+
+  if (!state.completedSteps[STEP_IDS.ELECTRICITY_BILL] || !dependenciesValid) {
     return state
   }
 
@@ -293,18 +319,39 @@ export function analyzeFormState(formData: PartialSimulationFormData) {
   const electricityBillProcessed = processElectricityBillStep(formData, capacityProcessed)
   const finalState = processEmailStep(formData, electricityBillProcessed)
 
+  const validatedCompletedSteps = { ...finalState.completedSteps }
+
+  Object.keys(STEP_DEPENDENCIES).forEach((stepId) => {
+    const typedStepId = stepId as (typeof STEP_IDS)[keyof typeof STEP_IDS]
+    if (validatedCompletedSteps[typedStepId] === undefined) {
+      validatedCompletedSteps[typedStepId] = false
+    }
+  })
+
+  // 各ステップの依存関係をチェックし、依存関係が満たされていない場合は未完了にする
+  Object.keys(STEP_DEPENDENCIES).forEach((stepId) => {
+    const typedStepId = stepId as (typeof STEP_IDS)[keyof typeof STEP_IDS]
+    if (
+      validatedCompletedSteps[typedStepId] &&
+      !validateStepDependencies(typedStepId, finalState.completedSteps)
+    ) {
+      validatedCompletedSteps[typedStepId] = false
+    }
+  })
+
   // フォーム完了判定
   const isFormComplete = Boolean(
-    finalState.completedSteps[STEP_IDS.POSTAL_CODE] &&
-      finalState.completedSteps.company &&
-      finalState.completedSteps.plan &&
-      finalState.completedSteps.capacity &&
-      finalState.completedSteps[STEP_IDS.ELECTRICITY_BILL] &&
-      finalState.completedSteps.email,
+    validatedCompletedSteps[STEP_IDS.POSTAL_CODE] &&
+      validatedCompletedSteps.company &&
+      validatedCompletedSteps.plan &&
+      validatedCompletedSteps.capacity &&
+      validatedCompletedSteps[STEP_IDS.ELECTRICITY_BILL] &&
+      validatedCompletedSteps.email,
   )
 
   return {
     ...finalState,
+    completedSteps: validatedCompletedSteps,
     isFormComplete,
   }
 }

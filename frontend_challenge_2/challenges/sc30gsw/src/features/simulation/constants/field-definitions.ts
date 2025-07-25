@@ -56,3 +56,16 @@ export const FIELD_TO_STEP_MAP = {
   [FIELD_NAMES.ELECTRICITY_BILL]: STEP_IDS.ELECTRICITY_BILL,
   [FIELD_NAMES.EMAIL]: STEP_IDS.EMAIL,
 } as const satisfies Record<string, string>
+
+export const STEP_ORDER = [
+  STEP_IDS.POSTAL_CODE,
+  STEP_IDS.COMPANY,
+  STEP_IDS.PLAN,
+  STEP_IDS.CAPACITY,
+  STEP_IDS.ELECTRICITY_BILL,
+  STEP_IDS.EMAIL,
+] as const satisfies readonly string[]
+
+export const STEP_DEPENDENCIES = Object.fromEntries(
+  STEP_ORDER.map((stepId, index) => [stepId, STEP_ORDER.slice(0, index)]),
+)

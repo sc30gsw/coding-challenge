@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { STEP_IDS } from '~/features/simulation/constants/field-definitions'
 import type { PartialSimulationFormData } from '~/features/simulation/types/schema/simulation-schema'
 import {
   analyzeFormState,
@@ -298,6 +299,100 @@ describe('form-state', () => {
     })
   })
 
+  describe('ステップ依存関係のテスト', () => {
+    it('電力会社を「その他」に変更した場合、電気代とメールのステップが未完了になる', () => {
+      const completeFormData = {
+        postalCode: '1234567',
+        company: 'tepco',
+        plan: 'juryoB',
+        capacity: 30,
+        electricityBill: 5000,
+        email: 'test@example.com',
+      } as const satisfies PartialSimulationFormData
+      
+      const completeResult = analyzeFormState(completeFormData)
+      expect(completeResult.isFormComplete).toBe(true)
+      expect(completeResult.completedSteps[STEP_IDS.ELECTRICITY_BILL]).toBe(true)
+      expect(completeResult.completedSteps.email).toBe(true)
+
+      const changedFormData = {
+        ...completeFormData,
+        company: 'other',
+      } as const satisfies PartialSimulationFormData
+      
+      const changedResult = analyzeFormState(changedFormData)
+      
+      // 電力会社ステップが未完了になることで、依存する後続ステップも未完了になる
+      expect(changedResult.completedSteps.company).toBe(false)
+      expect(changedResult.completedSteps[STEP_IDS.ELECTRICITY_BILL]).toBe(false)
+      expect(changedResult.completedSteps.email).toBe(false)
+      expect(changedResult.isFormComplete).toBe(false)
+    })
+
+    it('郵便番号を対象外エリアに変更した場合、全ての後続ステップが未完了になる', () => {
+      const completeFormData = {
+        postalCode: '1234567',
+        company: 'tepco',
+        plan: 'juryoB',
+        capacity: 30,
+        electricityBill: 5000,
+        email: 'test@example.com',
+      } as const satisfies PartialSimulationFormData
+      
+      const completeResult = analyzeFormState(completeFormData)
+      expect(completeResult.isFormComplete).toBe(true)
+
+      const changedFormData = {
+        ...completeFormData,
+        postalCode: '2000000',
+      } as const satisfies PartialSimulationFormData
+      
+      const changedResult = analyzeFormState(changedFormData)
+      
+      // 郵便番号ステップが未完了になることで、依存する全ての後続ステップも未完了になる
+      expect(changedResult.completedSteps['postal-code']).toBe(false)
+      expect(changedResult.completedSteps.company).toBe(false)
+      expect(changedResult.completedSteps.plan).toBe(false)
+      expect(changedResult.completedSteps.capacity).toBe(false)
+      expect(changedResult.completedSteps[STEP_IDS.ELECTRICITY_BILL]).toBe(false)
+      expect(changedResult.completedSteps.email).toBe(false)
+      expect(changedResult.isFormComplete).toBe(false)
+    })
+
+    it('プランを変更した場合、容量・電気代・メールのステップが適切に更新される', () => {
+      // 容量が必要なプランで全項目完了状態を作る
+      const completeFormData = {
+        postalCode: '1234567',
+        company: 'tepco',
+        plan: 'juryoB',
+        capacity: 30,
+        electricityBill: 5000,
+        email: 'test@example.com',
+      } as const satisfies PartialSimulationFormData
+      
+      const completeResult = analyzeFormState(completeFormData)
+      expect(completeResult.isFormComplete).toBe(true)
+
+      // 容量不要なプランに変更
+      const changedFormData = {
+        ...completeFormData,
+        company: 'kepco',
+        plan: 'juryoA',
+      } as const satisfies PartialSimulationFormData
+      
+      const changedResult = analyzeFormState(changedFormData)
+      
+      // プラン変更により容量は自動完了、電気代・メールは継続
+      expect(changedResult.completedSteps['postal-code']).toBe(true)
+      expect(changedResult.completedSteps.company).toBe(true)
+      expect(changedResult.completedSteps.plan).toBe(true)
+      expect(changedResult.completedSteps.capacity).toBe(true) // 容量不要のため自動完了
+      expect(changedResult.completedSteps[STEP_IDS.ELECTRICITY_BILL]).toBe(true)
+      expect(changedResult.completedSteps.email).toBe(true)
+      expect(changedResult.isFormComplete).toBe(true)
+    })
+  })
+
   describe('純粋関数構造のテスト（副作用なし）', () => {
     it('各ステップ関数は元のstateを変更しない', () => {
       const originalState = {
@@ -349,7 +444,6 @@ describe('form-state', () => {
       
       const result = analyzeFormState(formData)
       
-      // 依存関係の確認: 前のステップが完了していれば次のステップが有効
       expect(result.completedSteps['postal-code']).toBe(true)
       expect(result.completedSteps.company).toBe(true)
       expect(result.completedSteps.plan).toBe(true)
