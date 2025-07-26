@@ -17,8 +17,8 @@ export default function NoContractRequiredInfo({
           <IconInfoCircle stroke={2} className="text-blue-700" />
         </div>
         <div className="flex-1">
-          <p className="font-medium text-blue-800 text-sm">契約容量の入力は不要です</p>
-          <p className="mt-1 text-blue-700 text-sm">
+          <h4 className="font-bold text-blue-800 text-sm">契約容量の入力は不要です</h4>
+          <p className="mt-1 text-blue-700 text-xs leading-relaxed">
             選択されたプランでは契約容量の設定は必要ありません。そのまま次のステップにお進みください。
           </p>
         </div>
