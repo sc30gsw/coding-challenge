@@ -195,15 +195,13 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
   const submit = useCallback(() => {
     const submitHandler = handleSubmit(async (data) => {
       try {
-        const typedData = data as unknown as SimulationFormData
-
-        const customValidationErrors = validateSimulationForm(typedData)
+        const customValidationErrors = validateSimulationForm(data)
         if (Object.keys(customValidationErrors).length > 0) {
           setCustomErrors(customValidationErrors)
           return
         }
 
-        await onSubmit?.(typedData)
+        await onSubmit?.(data)
       } catch (error) {
         console.error("Form submission error:", error)
         setCustomErrors({ submit: "送信中にエラーが発生しました。再度お試しください。" })
