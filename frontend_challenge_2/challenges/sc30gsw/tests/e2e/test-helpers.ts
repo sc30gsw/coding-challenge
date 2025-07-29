@@ -4,10 +4,10 @@ import { expect, type Page } from "@playwright/test"
 export async function fillPostalCode(page: Page, postalCode: string) {
   const firstInput = page.getByLabel("電気を使用する場所の郵便番号").first()
   const secondInput = page.getByLabel("電気を使用する場所の郵便番号（後半）")
-  
+
   const firstPart = postalCode.slice(0, 3)
   const secondPart = postalCode.slice(3, 7)
-  
+
   await firstInput.fill(firstPart)
   await secondInput.fill(secondPart)
   await secondInput.blur()
@@ -16,19 +16,19 @@ export async function fillPostalCode(page: Page, postalCode: string) {
 export async function selectCompany(page: Page, company: string) {
   const select = page.getByLabel("電力会社").locator("..")
   await select.click()
-  await page.getByRole('option', { name: company }).click()
+  await page.getByRole("option", { name: company }).click()
 }
 
 export async function selectPlan(page: Page, plan: string) {
   const select = page.getByLabel("プラン").locator("..")
   await select.click()
-  await page.getByRole('option', { name: plan }).click()
+  await page.getByRole("option", { name: plan }).click()
 }
 
 export async function selectCapacity(page: Page, capacity: string) {
   const select = page.getByLabel("契約容量").locator("..")
   await select.click()
-  await page.getByRole('option', { name: capacity }).click()
+  await page.getByRole("option", { name: capacity }).click()
 }
 
 export async function fillElectricityBill(page: Page, amount: string) {
