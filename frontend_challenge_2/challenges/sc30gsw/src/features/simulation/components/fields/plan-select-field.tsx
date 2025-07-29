@@ -18,7 +18,7 @@ type PlanSelectFieldProps = {
   error?: string
   disabled?: boolean
   company: SimulationFormData["company"]
-  onChange?: (plan: SimulationFormData["plan"]) => void
+  onChange?: (plan: SimulationFormData["plan"], previousValue: SimulationFormData["plan"]) => void
 }
 
 export function PlanSelectField({
@@ -76,9 +76,10 @@ export function PlanSelectField({
                 <Select<PlanOption, false>
                   value={selectedOption}
                   onChange={(newValue: SingleValue<PlanOption>) => {
-                    const value = newValue?.value || ""
-                    field.onChange(value)
-                    onChange?.(value as SimulationFormData["plan"])
+                    const previousValue = field.value // 変更前の値
+                    const newPlanValue = newValue?.value || ""
+                    field.onChange(newPlanValue)
+                    onChange?.(newPlanValue as SimulationFormData["plan"], previousValue)
                   }}
                   options={planOptions}
                   placeholder="プランを選択してください"

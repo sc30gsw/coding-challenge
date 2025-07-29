@@ -225,6 +225,63 @@ describe('use-simulation-form', () => {
       expect(result.handlePlanChange).toBeDefined()
       expect(typeof result.handlePlanChange).toBe('function')
     })
+
+    it('関西電力で従量電灯Bから他のプランに変わる際にcapacityがリセットされる', () => {
+      mockGetValues.mockReturnValue({
+        postalCode: '5123456',
+        area: 'kansai',
+        company: 'kepco',
+        plan: 'juryoB',
+        electricityBill: 5000,
+        email: '',
+        capacity: 40,
+      })
+
+      const result = useSimulationForm()
+      
+      result.handlePlanChange('juryoA', 'juryoB')
+      
+      expect(mockSetValue).toHaveBeenCalledWith('capacity', null)
+      expect(mockClearErrors).toHaveBeenCalledWith('capacity')
+    })
+
+    it('関西電力以外の会社でプラン変更時はcapacityリセットされない', () => {
+      mockGetValues.mockReturnValue({
+        postalCode: '1123456',
+        area: 'tokyo',
+        company: 'tepco',
+        plan: 'juryoB',
+        electricityBill: 5000,
+        email: '',
+        capacity: 40,
+      })
+
+      const result = useSimulationForm()
+      
+      result.handlePlanChange('juryoC', 'juryoB')
+      
+      expect(mockSetValue).not.toHaveBeenCalledWith('capacity', null)
+      expect(mockClearErrors).not.toHaveBeenCalledWith('capacity')
+    })
+
+    it('関西電力で従量電灯B以外からの変更時はcapacityリセットされない', () => {
+      mockGetValues.mockReturnValue({
+        postalCode: '5123456',
+        area: 'kansai',
+        company: 'kepco',
+        plan: 'juryoA',
+        electricityBill: 5000,
+        email: '',
+        capacity: null,
+      })
+
+      const result = useSimulationForm()
+      
+      result.handlePlanChange('juryoB', 'juryoA')
+      
+      expect(mockSetValue).not.toHaveBeenCalledWith('capacity', null)
+      expect(mockClearErrors).not.toHaveBeenCalledWith('capacity')
+    })
   })
 
   describe('resetForm', () => {

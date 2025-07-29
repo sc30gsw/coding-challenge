@@ -1,6 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useCallback, useMemo, useState } from "react"
-import { AREA_CODES, COMPANY_CODES } from "~/features/simulation/constants/company-codes"
+import {
+  AREA_CODES,
+  COMPANY_CODES,
+  PLAN_CODES,
+} from "~/features/simulation/constants/company-codes"
 import { EMAIL_REGEX } from "~/features/simulation/constants/validation"
 import {
   type SimulationFormData,
@@ -175,8 +179,15 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
   )
 
   const handlePlanChange = useCallback(
-    (plan: SimulationFormData["plan"]) => {
+    (plan: SimulationFormData["plan"], previousPlan: SimulationFormData["plan"]) => {
       const previousFormData = getValues()
+      const selectedCompany = previousFormData.company
+
+      // 契約容量が必須から不要へ変わる場合はリセット
+      if (selectedCompany === COMPANY_CODES.KEPCO && previousPlan === PLAN_CODES.JURYO_B) {
+        setValue("capacity", null)
+        clearErrors("capacity")
+      }
 
       const fieldsToReset = getFieldsToReset(previousFormData, { ...previousFormData, plan })
 
@@ -184,7 +195,7 @@ export function useSimulationForm({ defaultValues = {}, onSubmit }: UseSimulatio
         resetFieldsFromIndex(fieldsToReset)
       }
     },
-    [getValues, resetFieldsFromIndex],
+    [getValues, setValue, clearErrors, resetFieldsFromIndex],
   )
 
   const resetForm = useCallback(() => {
